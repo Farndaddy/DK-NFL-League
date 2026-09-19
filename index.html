@@ -455,7 +455,7 @@ function renderOverview(){
   const kpis=`<div class="grid g4 mb">
     <div class="card kpi"><div class="v num">${money(POT)}</div><div class="l">Total pot</div><div class="s">${PLAYERS.length} players × ${money(RULES.fee)}</div></div>
     <div class="card kpi"><div class="v num">${DONE} / ${RULES.weeksInSeason}</div><div class="l">Weeks complete</div><div class="s">League avg this week ${f2(r.avg)}</div></div>
-    <div class="card kpi"><div class="v">${esc(st.cc[0].owner)}</div><div class="l">Champions Circle leader</div><div class="s">${f2(st.cc[0].cc)} pts${DONE<=RULES.drops?" · drops start at Week ${RULES.drops+1}":""}</div></div>
+    <div class="card kpi"><div class="v">${esc(st.cc[0].owner)}</div><div class="l">Champions Circle leader</div><div class="s">${f2(st.cc[0].cc)} pts${DONE<=RULES.drops?" · drops start at Week "+(RULES.drops+1):""}</div></div>
     <div class="card kpi"><div class="v num">${f2(hw.v)}</div><div class="l">Season high week</div><div class="s">${esc(hw.p.owner)} · Week ${hw.w} · $${RULES.highPrize} at season end</div></div>
   </div>`;
   const cc=`<div class="card accent"><h3>Champions Circle <span class="tag">top 10 · ${DONE>RULES.drops?`best ${DONE-RULES.drops} of ${DONE} weeks`:`drops start at Week ${RULES.drops+1}`}</span></h3>${st.cc.slice(0,10).map(x=>`<div class="row ${isMe(x.dk)}"><span class="pl">${x.ccRank}</span><div class="nm"><span class="own">${esc(x.owner)}</span></div><span class="vl num">${f2(x.cc)}</span></div>`).join("")}<p class="small muted" style="margin-top:10px">Full tables in Standings.</p></div>`;
