@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NFL DK League — 2026 Season</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B162A; --navy2:#101f3a; --navy3:#16294a; --card:#132441; --card2:#1a2f55;
+  --orange:#C83803; --orange2:#E8591A; --orange-soft:rgba(200,56,3,.14);
+  --white:#ffffff; --text:#e9eef7; --text2:#9fb0cc; --line:rgba(255,255,255,.08); --line2:rgba(232,89,26,.35);
+  --gold:#f2c14e; --silver:#c9d1dc; --bronze:#d08a4c; --up:#4cc38a; --down:#ff6b5b;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--navy);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:14px;line-height:1.45;min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:repeating-linear-gradient(90deg,transparent 0 119px,rgba(255,255,255,.025) 119px 120px)}
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+h1,h2,h3,.num,.oswald{font-family:Oswald,Inter,sans-serif;letter-spacing:.3px}
+.num{font-variant-numeric:tabular-nums}
+
+/* HEADER */
+header{position:relative;z-index:1;background:linear-gradient(180deg,#07101f 0%,var(--navy) 100%);border-bottom:4px solid var(--orange)}
+.hero{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:34px 0 28px}
+.brand{display:flex;align-items:center;gap:18px}
+.crest{width:64px;height:64px;border-radius:14px;background:var(--orange);display:grid;place-items:center;box-shadow:0 0 0 3px var(--navy),0 0 0 5px var(--orange)}
+.crest svg{width:40px;height:40px}
+.brand h1{font-size:34px;font-weight:700;color:#fff;line-height:1;text-transform:uppercase}
+.brand h1 span{color:var(--orange2)}
+.brand p{color:var(--text2);margin-top:6px;font-size:13px}
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{border:1px solid var(--line2);background:var(--orange-soft);color:#ffd9c7;border-radius:999px;padding:6px 14px;font-size:12px;font-weight:600}
+.chip.alt{border-color:var(--line);background:rgba(255,255,255,.04);color:var(--text2)}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:50;background:rgba(11,22,42,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.tabs{display:flex;overflow-x:auto;scrollbar-width:none;max-width:1280px;margin:0 auto;padding:0 12px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:14px 16px;font-family:Oswald,sans-serif;font-size:14px;text-transform:uppercase;letter-spacing:.8px;color:var(--text2);cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;user-select:none}
+.tab:hover{color:#fff}
+.tab.active{color:#fff;border-bottom-color:var(--orange)}
+
+/* SECTIONS */
+main{position:relative;z-index:1}
+.section{display:none;padding:28px 0 60px}
+.section.active{display:block}
+.sh{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.sh h2{font-size:26px;text-transform:uppercase;color:#fff;font-weight:700}
+.sh h2 small{display:block;font-family:Inter;font-size:13px;text-transform:none;color:var(--text2);font-weight:500;margin-top:4px;letter-spacing:0}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:960px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g2{grid-template-columns:1fr}}
+@media(max-width:560px){.g3,.g4{grid-template-columns:1fr}.brand h1{font-size:26px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;position:relative;overflow:hidden;min-width:0}
+.card.accent{border-top:3px solid var(--orange)}
+.card h3{font-size:16px;text-transform:uppercase;color:#fff;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card h3 .tag{font-family:Inter;font-size:11px;text-transform:none;color:var(--text2);font-weight:500}
+.mb{margin-bottom:16px}
+.muted{color:var(--text2)}
+.small{font-size:12px}
+
+/* KPI */
+.kpi .v{font-family:Oswald;font-size:32px;font-weight:700;color:#fff;line-height:1.1}
+.kpi .l{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-top:6px;font-weight:600}
+.kpi .s{font-size:12px;color:#ffc2a6;margin-top:4px}
+
+/* WINNER BANNER */
+.banner{background:linear-gradient(120deg,var(--orange) 0%,#a92f02 60%,#7f2402 100%);border-radius:16px;padding:26px;display:grid;grid-template-columns:1.2fr 1fr;gap:24px;margin-bottom:16px;color:#fff;position:relative;overflow:hidden}
+.banner::after{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;border:30px solid rgba(255,255,255,.06)}
+.banner .eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:2px;font-weight:700;opacity:.85}
+.banner .who{font-family:Oswald;font-size:40px;font-weight:700;line-height:1.05;margin-top:6px;text-transform:uppercase}
+.banner .dk{opacity:.85;font-weight:600;margin-top:2px}
+.banner .pts{font-family:Oswald;font-size:58px;font-weight:700;line-height:1;margin-top:14px}
+.banner .pts small{font-size:16px;opacity:.8;margin-left:6px}
+.banner .lu{font-size:12px;opacity:.92;margin-top:10px;line-height:1.6}
+.podium{display:flex;flex-direction:column;gap:10px;position:relative;z-index:1}
+.pod{background:rgba(11,22,42,.35);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px}
+.pod .p{font-family:Oswald;font-size:22px;width:30px;text-align:center}
+.pod .n{font-weight:700}
+.pod .d{font-size:12px;opacity:.8}
+.pod .sc{margin-left:auto;font-family:Oswald;font-size:22px}
+@media(max-width:760px){.banner{grid-template-columns:1fr}.banner .who{font-size:30px}.banner .pts{font-size:44px}}
+
+/* TABLES */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--navy3);color:var(--text2);font-size:11px;text-transform:uppercase;letter-spacing:.8px;text-align:left;padding:10px 12px;white-space:nowrap;position:sticky;top:0;font-weight:700}
+td{padding:10px 12px;border-top:1px solid var(--line);white-space:nowrap}
+tr:hover td{background:rgba(255,255,255,.025)}
+td.r,th.r{text-align:right}
+td.c,th.c{text-align:center}
+.rk{font-family:Oswald;font-size:15px;color:var(--text2);width:36px}
+.rk1{color:var(--gold)}.rk2{color:var(--silver)}.rk3{color:var(--bronze)}
+.own{font-weight:600;color:#fff}
+.dkn{font-size:11px;color:var(--text2)}
+.tot{font-family:Oswald;font-size:16px;color:#fff}
+.hl td{background:rgba(200,56,3,.12)}
+.me td:first-child{box-shadow:inset 3px 0 0 var(--orange)}
+.up{color:var(--up);font-weight:700}.down{color:var(--down);font-weight:700}.flat{color:var(--text2)}
+.pill{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700;background:var(--orange-soft);color:#ffc2a6;border:1px solid var(--line2)}
+.pill.g{background:rgba(76,195,138,.12);color:#9ee6c1;border-color:rgba(76,195,138,.35)}
+.pill.n{background:rgba(255,255,255,.05);color:var(--text2);border-color:var(--line)}
+.lu-cell{white-space:normal;min-width:320px;font-size:12px;color:var(--text2);line-height:1.6}
+.lu-cell b{color:#fff;font-weight:600}
+.pos{display:inline-block;min-width:34px;font-size:10px;font-weight:700;color:var(--orange2)}
+.banner .pos{color:#ffd9c7;min-width:0;margin-right:4px}
+
+/* HEAT */
+.heat td.s{font-family:Oswald;font-size:13px;text-align:center;min-width:52px}
+.sticky1{position:sticky;left:0;background:var(--card);z-index:2}
+th.sticky1{background:var(--navy3);z-index:3}
+
+/* LIST ROWS */
+.row{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0}
+.row .pl{font-family:Oswald;font-size:16px;width:26px;color:var(--text2)}
+.row .nm{flex:1;min-width:0}
+.row .nm .own{display:block;overflow:hidden;text-overflow:ellipsis}
+.row .vl{font-family:Oswald;font-size:18px;color:#fff}
+.bar{height:6px;border-radius:3px;background:rgba(255,255,255,.07);margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--orange2);border-radius:3px}
+
+/* CONTROLS */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{background:transparent;color:var(--text2);border:0;padding:8px 14px;font:600 12px Inter;cursor:pointer}
+.seg button.on{background:var(--orange);color:#fff}
+select{background:var(--card2);color:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font:600 13px Inter}
+
+/* NOTES */
+.note{max-width:860px}
+.note h3{font-size:22px;text-transform:uppercase;color:#fff;margin-bottom:6px}
+.note .meta{color:var(--orange2);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
+.note p{margin-bottom:12px;color:#d7dfed;font-size:15px;line-height:1.65}
+.note p b{color:#fff}
+.awards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:18px}
+.award{background:var(--card2);border-radius:12px;padding:14px;border-left:3px solid var(--orange)}
+.award .t{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--orange2);font-weight:700}
+.award .w{font-family:Oswald;font-size:18px;color:#fff;margin-top:4px}
+.award .x{font-size:12px;color:var(--text2);margin-top:2px}
+
+.empty{padding:28px;text-align:center;color:var(--text2);border:1px dashed var(--line);border-radius:12px}
+footer{position:relative;z-index:1;border-top:1px solid var(--line);padding:22px 0 40px;color:var(--text2);font-size:12px}
+svg text{font-family:Inter,sans-serif}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hero">
+    <div class="brand">
+      <div class="crest" aria-hidden="true">
+        <svg viewBox="0 0 40 40"><ellipse cx="20" cy="20" rx="16" ry="10" transform="rotate(-35 20 20)" fill="#0B162A"/><path d="M13 27 27 13" stroke="#fff" stroke-width="1.6"/><path d="M17 21.5l1.5 1.5M19 19.5l1.5 1.5M21 17.5l1.5 1.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <h1>NFL DK <span>League</span></h1>
+        <p id="subTitle">DraftKings Sunday main slate · 2026 season</p>
+      </div>
+    </div>
+    <div class="chips" id="headChips"></div>
+  </div>
+</header>
+
+<nav><div class="tabs" id="tabs"></div></nav>
+
+<main class="wrap">
+  <section class="section" id="overview" data-module="overview"></section>
+  <section class="section" id="weekly" data-module="weekly"></section>
+  <section class="section" id="standings" data-module="standings"></section>
+  <section class="section" id="movers" data-module="movers"></section>
+  <section class="section" id="earnings" data-module="earnings"></section>
+  <section class="section" id="winners" data-module="winners"></section>
+  <section class="section" id="analysis" data-module="analysis"></section>
+  <section class="section" id="rivalry" data-module="rivalry"></section>
+  <section class="section" id="lab" data-module="lab"></section>
+  <section class="section" id="payouts" data-module="payouts"></section>
+  <section class="section" id="history" data-module="history"></section>
+</main>
+
+<footer><div class="wrap" id="foot"></div></footer>
+
+<script>
+/* ======================================================================
+   DATA — the only block the weekly update replaces (from the Apps Script
+   "Build Site Data" menu or Claude). Everything else is permanent.
+   ====================================================================== */
+// NFL_DATA_START
+const SEASON = 2026;
+const WEEKS = [{"wk": 1, "label": "Week 1"}];
+const PLAYERS = [
+  {"owner": "Aaron Jerdee", "dk": "ajerdee", "scores": [94.84, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Anthony Gjonaj", "dk": "DetroitColt", "scores": [109.36, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Auston Chen", "dk": "Chenaus", "scores": [121.72, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Brent Tebeau", "dk": "boilerbits", "scores": [143.34, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Brian Danahy", "dk": "bmd1973", "scores": [184.8, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Charlie Buchanan", "dk": "Buchanan_C", "scores": [199.56, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Chris Good", "dk": "CGOOD113", "scores": [166.14, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Collin Jewett", "dk": "chitownCJ", "scores": [143.36, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Connor Thinnes", "dk": "cthinnes4", "scores": [145.92, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Damien Iniguez", "dk": "damien619", "scores": [105.56, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "De Smith", "dk": "Trainwrecked09", "scores": [180.3, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Eric Wills", "dk": "Edubz66", "scores": [140.6, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Farnia Ghavami", "dk": "Farndaddy", "scores": [159.44, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Glen Hitchcock", "dk": "glenvienhitch", "scores": [152.74, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Harris Elliott", "dk": "helliottlaw", "scores": [112.16, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Hicks & Farbs", "dk": "hickstw", "scores": [107.76, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Jeremy Buchanan", "dk": "Jeromac", "scores": [130.78, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Jeremy Smith", "dk": "jjsmith84", "scores": [119.26, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Joe Peedikayil", "dk": "Joespeed12", "scores": [151.36, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "John Degnan", "dk": "jddegs19", "scores": [167.44, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Jon Love", "dk": "pooriejay", "scores": [118.2, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Justin Carter", "dk": "Th3carter3", "scores": [163.66, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Keith Sanders", "dk": "Bnobbyk", "scores": [114.44, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Kyle Young", "dk": "Kunit30", "scores": [176.96, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Larry Hitchcock", "dk": "IamSchitzweak", "scores": [106.82, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Michael Steltenpohl", "dk": "TheStelt", "scores": [152.96, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Mike Grosh", "dk": "mgrosh20", "scores": [153.46, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Milan Patel", "dk": "milanmpi1", "scores": [169.74, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Nate Jacobson", "dk": "natejacobson1", "scores": [171.84, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Paul Hustrulid", "dk": "phustrulid", "scores": [93.84, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Rhett Graham", "dk": "CallNine11", "scores": [86.2, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Ricky McNeely", "dk": "RickyMc17", "scores": [139.96, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Ryan Carter", "dk": "Danglesticks", "scores": [125.76, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Ryan Miller", "dk": "Rycmille", "scores": [108.96, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Tim Wavercak", "dk": "t_waves", "scores": [164.2, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Troy Hitchcock", "dk": "tvhitchc", "scores": [157.86, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]},
+  {"owner": "Darius Morris", "dk": "dmace3", "scores": [86.2, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]}
+];
+const LINEUPS = {"1": {"buchanan_c": "DST Steelers FLEX Trey McBride QB Lamar Jackson RB Jahmyr Gibbs RB MarShawn Lloyd TE Michael Mayer WR Amon-Ra St. Brown WR Zay Flowers WR Devaughn Vele", "bmd1973": "DST Dolphins FLEX Dallas Goedert QB Tyler Shough RB Bijan Robinson RB De'Von Achane TE Juwan Johnson WR Justin Jefferson WR Chris Olave WR Keenan Allen", "trainwrecked09": "DST Texans FLEX D'Andre Swift QB Tyler Shough RB Jahmyr Gibbs RB De'Von Achane TE Juwan Johnson WR Chris Olave WR Ladd McConkey WR Tre Tucker", "kunit30": "DST Raiders FLEX Rico Dowdle QB Lamar Jackson RB Jahmyr Gibbs RB David Montgomery TE Juwan Johnson WR Chris Olave WR Luther Burden III WR Chris Godwin Jr.", "natejacobson1": "DST Jets FLEX Tre Tucker QB Jared Goff RB Jahmyr Gibbs RB Bijan Robinson TE Michael Mayer WR Amon-Ra St. Brown WR Chris Olave WR Quentin Johnston", "milanmpi1": "DST Jets FLEX Michael Mayer QB Jared Goff RB Jahmyr Gibbs RB Omarion Hampton TE Juwan Johnson WR Amon-Ra St. Brown WR Chris Olave WR Garrett Wilson", "jddegs19": "DST Lions FLEX Kyle Pitts Sr. QB Baker Mayfield RB Jahmyr Gibbs RB Derrick Henry TE Dallas Goedert WR Justin Jefferson WR Chris Godwin Jr. WR Quentin Johnston", "cgood113": "DST Jets FLEX Bijan Robinson QB Bryce Young RB Omarion Hampton RB Breece Hall TE Dallas Goedert WR Ja'Marr Chase WR Tetairoa McMillan WR Devaughn Vele", "t_waves": "DST Jets FLEX Jaylen Warren QB Tyler Shough RB Jonathan Taylor RB Derrick Henry TE Tyler Warren WR Amon-Ra St. Brown WR Makai Lemon WR Michael Pittman Jr.", "th3carter3": "DST Jaguars FLEX Ashton Jeanty QB Justin Herbert RB Omarion Hampton RB D'Andre Swift TE Michael Mayer WR DeVonta Smith WR Ladd McConkey WR Parker Washington", "farndaddy": "DST Cardinals FLEX Jahmyr Gibbs QB Baker Mayfield RB Jonathan Taylor RB David Montgomery TE Tucker Kraft WR Tetairoa McMillan WR Garrett Wilson WR Malik Washington", "tvhitchc": "DST Jets FLEX Tre Tucker QB Justin Herbert RB Jahmyr Gibbs RB Bijan Robinson TE Michael Mayer WR Ja'Marr Chase WR Amon-Ra St. Brown WR Devaughn Vele", "mgrosh20": "DST Bears FLEX Jameson Williams QB Caleb Williams RB Kyle Monangai RB Chris Brooks TE Colston Loveland WR Amon-Ra St. Brown WR Justin Jefferson WR Stefon Diggs", "thestelt": "DST Jets FLEX Travis Etienne Jr. QB Justin Herbert RB Jahmyr Gibbs RB Bijan Robinson TE Michael Mayer WR Ja'Marr Chase WR Ladd McConkey WR Caleb Douglas", "glenvienhitch": "DST Jets FLEX Juwan Johnson QB Baker Mayfield RB Jahmyr Gibbs RB Bijan Robinson TE Michael Mayer WR Ja'Marr Chase WR Amon-Ra St. Brown WR Tre Tucker", "joespeed12": "DST Browns FLEX DJ Moore QB Justin Herbert RB Ashton Jeanty RB Bucky Irving TE T.J. Hockenson WR Ja'Marr Chase WR Amon-Ra St. Brown WR Michael Wilson", "cthinnes4": "DST Jets FLEX De'Von Achane QB Jalen Hurts RB Chase Brown RB Omarion Hampton TE Michael Mayer WR DeVonta Smith WR Ladd McConkey WR Jalen Coker", "chitowncj": "DST Browns FLEX Juwan Johnson QB Justin Herbert RB Jahmyr Gibbs RB Bijan Robinson TE Michael Mayer WR Ja'Marr Chase WR Amon-Ra St. Brown WR Tre Tucker", "boilerbits": "DST Jets FLEX Tyler Warren QB Jared Goff RB Jahmyr Gibbs RB Saquon Barkley TE Michael Mayer WR Ja'Marr Chase WR Amon-Ra St. Brown WR Devaughn Vele", "edubz66": "DST Bears FLEX Jahmyr Gibbs QB Trevor Lawrence RB Omarion Hampton RB Bucky Irving TE Tucker Kraft WR Tetairoa McMillan WR Luther Burden III WR Wan'Dale Robinson", "rickymc17": "DST Jets FLEX Marvin Harrison Jr. QB Justin Herbert RB Jahmyr Gibbs RB D'Andre Swift TE Cade Otton WR Nico Collins WR Tee Higgins WR Quentin Johnston", "jeromac": "DST Chargers FLEX Tony Pollard QB Jordan Love RB Jonathan Taylor RB Derrick Henry TE Tyler Warren WR Alec Pierce WR Carnell Tate WR Chris Godwin Jr.", "danglesticks": "DST Jets FLEX Michael Mayer QB Justin Herbert RB Jahmyr Gibbs RB Omarion Hampton TE Sam LaPorta WR Ja'Marr Chase WR Amon-Ra St. Brown WR Tre Tucker", "chenaus": "DST Buccaneers FLEX Jahmyr Gibbs QB Cooper Rush RB Omarion Hampton RB Tony Pollard TE Cade Otton WR Amon-Ra St. Brown WR Tee Higgins WR Luther Burden III", "jjsmith84": "DST Packers FLEX KC Concepcion Jr. QB Justin Herbert RB Jahmyr Gibbs RB Bucky Irving TE Colston Loveland WR DeVonta Smith WR Ladd McConkey WR Wan'Dale Robinson", "pooriejay": "DST Vikings FLEX DeVonta Smith QB Trevor Lawrence RB Chase Brown RB Travis Etienne Jr. TE Michael Mayer WR Ja'Marr Chase WR Parker Washington WR Luther Burden III", "bnobbyk": "DST Texans FLEX Jauan Jennings QB Baker Mayfield RB Chase Brown RB D'Andre Swift TE Tucker Kraft WR Ja'Marr Chase WR Chris Olave WR Quentin Johnston", "helliottlaw": "DST Chargers FLEX Terry McLaurin QB Caleb Williams RB Chase Brown RB Bucky Irving TE Colston Loveland WR Tetairoa McMillan WR Alec Pierce WR KC Concepcion Jr.", "detroitcolt": "DST Browns FLEX De'Von Achane QB Justin Herbert RB Jahmyr Gibbs RB Jonathan Taylor TE Michael Mayer WR Ja'Marr Chase WR Quentin Johnston WR Tre Tucker", "rycmille": "DST Steelers FLEX Rico Dowdle QB Joe Burrow RB Saquon Barkley RB Bucky Irving TE Dallas Goedert WR Ja'Marr Chase WR Josh Downs WR Wan'Dale Robinson", "hickstw": "DST Bears FLEX Tyler Allgeier QB Caleb Williams RB Chase Brown RB De'Von Achane TE Colston Loveland WR Jameson Williams WR Garrett Wilson WR Quentin Johnston", "iamschitzweak": "DST Jets FLEX Saquon Barkley QB Kyler Murray RB Jahmyr Gibbs RB Omarion Hampton TE Juwan Johnson WR DeVonta Smith WR Garrett Wilson WR Tre Tucker", "damien619": "DST Chargers FLEX Michael Mayer QB Lamar Jackson RB Omarion Hampton RB MarShawn Lloyd TE Colston Loveland WR Amon-Ra St. Brown WR Drake London WR Ladd McConkey", "ajerdee": "DST Titans FLEX Travis Etienne Jr. QB Baker Mayfield RB Tony Pollard RB Jordan Mason TE Cade Otton WR Ja'Marr Chase WR Zay Flowers WR Emeka Egbuka", "phustrulid": "DST Lions FLEX Saquon Barkley QB Baker Mayfield RB De'Von Achane RB Omarion Hampton TE Michael Mayer WR Tee Higgins WR Garrett Wilson WR Chris Godwin Jr.", "callnine11": "DST Jets FLEX Colston Loveland QB Malik Willis RB De'Von Achane RB Omarion Hampton TE Juwan Johnson WR Ja'Marr Chase WR Tetairoa McMillan WR Luther Burden III"}};
+const OWNERSHIP = {"1": [["Jahmyr Gibbs", "RB", 52.78, 37.6], ["Michael Mayer", "TE", 41.67, 9.2], ["Ja'Marr Chase", "WR", 38.89, 3.2], ["Amon-Ra St. Brown", "WR", 36.11, 28.7], ["Jets", "DST", 36.11, 9.0], ["Omarion Hampton", "RB", 30.56, 9.3], ["Justin Herbert", "QB", 25.0, 14.26], ["Tre Tucker", "WR", 22.22, 4.7], ["Juwan Johnson", "TE", 22.22, 14.4], ["Bijan Robinson", "RB", 19.44, 31.3], ["De'Von Achane", "RB", 19.44, 10.6], ["Baker Mayfield", "QB", 16.67, 14.64], ["Chris Olave", "WR", 16.67, 31.2], ["Ladd McConkey", "WR", 16.67, 19.2], ["Quentin Johnston", "WR", 16.67, 3.7], ["Colston Loveland", "TE", 16.67, 0.0], ["Chase Brown", "RB", 13.89, 18.8], ["Bucky Irving", "RB", 13.89, 21.3], ["DeVonta Smith", "WR", 13.89, 8.3], ["Tetairoa McMillan", "WR", 13.89, 11.5], ["Garrett Wilson", "WR", 13.89, 13.9], ["Luther Burden III", "WR", 13.89, 10.5], ["Jonathan Taylor", "RB", 11.11, 26.1], ["Saquon Barkley", "RB", 11.11, 9.0], ["D'Andre Swift", "RB", 11.11, 35.4], ["Chris Godwin Jr.", "WR", 11.11, 8.3], ["Devaughn Vele", "WR", 11.11, 19.9], ["Dallas Goedert", "TE", 11.11, 23.7], ["Lamar Jackson", "QB", 8.33, 28.96], ["Caleb Williams", "QB", 8.33, 37.26], ["Jared Goff", "QB", 8.33, 16.44], ["Tyler Shough", "QB", 8.33, 29.2], ["Derrick Henry", "RB", 8.33, 38.3], ["Travis Etienne Jr.", "RB", 8.33, 14.8], ["Tony Pollard", "RB", 8.33, 4.4], ["Justin Jefferson", "WR", 8.33, 31.2], ["Tee Higgins", "WR", 8.33, 8.9], ["Wan'Dale Robinson", "WR", 8.33, 8.8], ["Tyler Warren", "TE", 8.33, 10.3], ["Tucker Kraft", "TE", 8.33, 9.5], ["Cade Otton", "TE", 8.33, 5.6], ["Chargers", "DST", 8.33, 1.0], ["Bears", "DST", 8.33, 6.0], ["Browns", "DST", 8.33, 0.0], ["Trevor Lawrence", "QB", 5.56, 26.1], ["Ashton Jeanty", "RB", 5.56, 35.7], ["David Montgomery", "RB", 5.56, 28.9], ["Rico Dowdle", "FLEX", 5.56, 4.1], ["MarShawn Lloyd", "RB", 5.56, 3.7], ["Zay Flowers", "WR", 5.56, 29.0], ["Jameson Williams", "WR", 5.56, 8.5], ["Alec Pierce", "WR", 5.56, 10.1], ["Parker Washington", "WR", 5.56, 19.3], ["KC Concepcion Jr.", "WR", 5.56, 8.8], ["Steelers", "DST", 5.56, 18.0], ["Lions", "DST", 5.56, 10.0], ["Texans", "DST", 5.56, -2.0], ["Joe Burrow", "QB", 2.78, 15.16], ["Jalen Hurts", "QB", 2.78, 24.72], ["Jordan Love", "QB", 2.78, 24.48], ["Kyler Murray", "QB", 2.78, 0.62], ["Malik Willis", "QB", 2.78, 17.7], ["Bryce Young", "QB", 2.78, 35.44], ["Cooper Rush", "QB", 2.78, 7.72], ["Breece Hall", "RB", 2.78, 22.8], ["Jordan Mason", "RB", 2.78, 11.9], ["Jaylen Warren", "FLEX", 2.78, 11.3], ["Kyle Monangai", "RB", 2.78, 23.4], ["Tyler Allgeier", "FLEX", 2.78, 9.0], ["Chris Brooks", "RB", 2.78, 2.9], ["Nico Collins", "WR", 2.78, 21.2], ["Drake London", "WR", 2.78, 5.5], ["Emeka Egbuka", "WR", 2.78, 11.3], ["Terry McLaurin", "FLEX", 2.78, 3.4], ["DJ Moore", "FLEX", 2.78, 24.0], ["Carnell Tate", "WR", 2.78, 7.8], ["Michael Wilson", "WR", 2.78, 10.6], ["Josh Downs", "WR", 2.78, 5.7], ["Makai Lemon", "WR", 2.78, 2.5], ["Marvin Harrison Jr.", "FLEX", 2.78, 4.3], ["Michael Pittman Jr.", "WR", 2.78, 8.8], ["Jalen Coker", "WR", 2.78, 36.8], ["Jauan Jennings", "FLEX", 2.78, 0.0], ["Malik Washington", "WR", 2.78, 7.3], ["Caleb Douglas", "WR", 2.78, 14.4], ["Trey McBride", "FLEX", 2.78, 24.5], ["Kyle Pitts Sr.", "FLEX", 2.78, 0.0], ["Sam LaPorta", "TE", 2.78, 9.8], ["T.J. Hockenson", "TE", 2.78, 13.6], ["Jaguars", "DST", 2.78, 13.0], ["Titans", "DST", 2.78, 0.0], ["Packers", "DST", 2.78, 1.0], ["Raiders", "DST", 2.78, 13.0], ["Vikings", "DST", 2.78, 8.0], ["Dolphins", "DST", 2.78, 4.0], ["Buccaneers", "DST", 2.78, 9.0], ["Cardinals", "DST", 2.78, 10.0], ["Stefon Diggs", "WR", 2.78, 15.5], ["Keenan Allen", "WR", 2.78, 9.2]]};
+// NFL_DATA_END
+
+/* Weekly write-ups (Claude adds one entry per week; keep old weeks) */
+// NFL_NOTES_START
+const NOTES = {
+  1: {
+    title: "Charlie Buchanan opens the season with a 199.56 statement",
+    body: `<p><b>Charlie Buchanan</b> came out of the gate with <b>199.56</b>, the only score within sniffing distance of 200, and took the first $100 of the season. The recipe: Lamar Jackson stacked with Zay Flowers (58 points between them), Jahmyr Gibbs at 37.6, and a Trey McBride FLEX that nobody else in the league had. That's a one-of-one FLEX in a 36-lineup league. Charlie wasn't guessing, he was reading ahead.</p>
+      <p><b>Brian Danahy</b> (184.80) and <b>De Smith</b> (180.30) filled out the podium, and both of them rode the same Tyler Shough, Chris Olave, Juwan Johnson Saints stack. Three of the top four lineups had a QB stack. Across the whole league, though, stacked lineups averaged 143.02 and unstacked ones 143.59, so the stack only paid off when the QB actually showed up. Ask the Justin Herbert stackers (14.26 from the QB) how that went.</p>
+      <p>Now the other end of the standings. <b>Ja'Marr Chase</b> was in 14 lineups (38.9% owned) and put up <b>3.2 points</b>. Fourteen of you paid top-shelf salary for a guy who scored like a kicker with a sore ankle. Two of the three Hitchcocks (Troy and Glen) were on him, which is either family loyalty or a group chat that needs an intervention.</p>
+      <p>Speaking of Hitchcocks: <b>Larry</b> started <b>Kyler Murray</b>, who delivered <b>0.6 points</b>. Not 6. Zero point six. Larry finished 32nd, and Troy (12th) and Glen (15th) are already arguing about who gets to bring it up at Thanksgiving.</p>
+      <p>Family feuds, round one: Charlie beat brother <b>Jeremy</b> by <b>68.78</b>. Jeremy at least owned Derrick Henry (38.3, 8% owned), so he gets partial credit and zero dollars. <b>Justin Carter</b> beat <b>Ryan Carter</b> by 37.90, and Ryan, last year's Season-Long runner-up, starts from 23rd.</p>
+      <p>Defending champion <b>Brent Tebeau</b> opened 19th with 143.34. He finished 2025 holding both titles, so nobody should relax. <b>Rhett Graham</b> (the 2023 champ) finished last among the 36 actual entries at 86.20. <b>Darius Morris</b> joins in Week 2 and takes the last-place score for Week 1, so Rhett has company at the bottom. It's the only company he'll want this season.</p>
+      <p>League average was 138.58. Champions Circle drops start at Week 4, so every bad week still counts for now. The good news is that everyone gets to throw out three of these.</p>`,
+    awards: [
+      ["Week 1 winner", "Charlie Buchanan", "199.56 · Lamar + Zay stack · $100"],
+      ["Chalk that broke", "Ja'Marr Chase", "38.9% owned · 3.2 pts · 14 lineups"],
+      ["Best low-owned play", "Derrick Henry", "38.3 pts at 8.3% · Degnan, Wavercak, J. Buchanan"],
+      ["Worst QB decision", "Larry Hitchcock", "Kyler Murray · 0.6 pts"],
+      ["Only one who had him", "Trey McBride", "24.5 pts as Charlie's FLEX"],
+      ["Brotherly love", "Buchanan vs Buchanan", "Charlie by 68.78"]
+    ]
+  }
+};
+// NFL_NOTES_END
+
+/* Player -> NFL team, used only to detect QB stacks. Add players as needed. */
+// NFL_TEAMS_START
+const TEAMS = {
+  "Lamar Jackson": "BAL",
+  "Zay Flowers": "BAL",
+  "Justin Herbert": "LAC",
+  "Ladd McConkey": "LAC",
+  "Quentin Johnston": "LAC",
+  "Jared Goff": "DET",
+  "Amon-Ra St. Brown": "DET",
+  "Jameson Williams": "DET",
+  "Sam LaPorta": "DET",
+  "Baker Mayfield": "TB",
+  "Chris Godwin Jr.": "TB",
+  "Emeka Egbuka": "TB",
+  "Joe Burrow": "CIN",
+  "Ja'Marr Chase": "CIN",
+  "Tee Higgins": "CIN",
+  "Jalen Hurts": "PHI",
+  "DeVonta Smith": "PHI",
+  "Caleb Williams": "CHI",
+  "Colston Loveland": "CHI",
+  "Luther Burden III": "CHI",
+  "Trevor Lawrence": "JAX",
+  "Parker Washington": "JAX",
+  "Jordan Love": "GB",
+  "Tucker Kraft": "GB",
+  "Bryce Young": "CAR",
+  "Tetairoa McMillan": "CAR",
+  "Jalen Coker": "CAR",
+  "Tyler Shough": "NO",
+  "Chris Olave": "NO",
+  "Juwan Johnson": "NO"
+};
+// NFL_TEAMS_END
+
+/* Past seasons, pulled from the master sheet tabs 2020-2025 (static) */
+// NFL_HISTORY_START
+const HISTORY_RANKS = {"2025": {"n": 36, "r": {"tvhitchc": [5, 5], "boilerbits": [1, 1], "natejacobson1": [3, 4], "danglesticks": [2, 3], "iamschitzweak": [8, 9], "glenvienhitch": [4, 2], "chitowncj": [10, 7], "cgood113": [19, 23], "th3carter3": [6, 6], "ajerdee": [15, 18], "detroitcolt": [26, 19], "farndaddy": [20, 15], "thestelt": [11, 11], "dmace3": [9, 10], "milanpi1": [7, 8], "crussgm": [28, 29], "trainwrecked09": [22, 24], "bmd1973": [24, 28], "jddegs19": [14, 17], "pooriejay": [18, 12], "helliottlaw": [27, 30], "mgrosh20": [21, 25], "robvassallo1228": [25, 22], "buchanan_c": [23, 20], "rycmille": [17, 21], "chenaus": [30, 26], "rjs5733": [29, 27], "callnine11": [13, 14], "cthinnes4": [31, 31], "kunit30": [16, 16], "kudaddy21": [12, 13], "jeromac": [35, 34], "joespeed12": [32, 33], "edubz66": [33, 35], "modogg75": [34, 32], "damien619": [36, 36]}}, "2024": {"n": 35, "r": {"danglesticks": [1, 1], "natejacobson1": [2, 2], "milanpi1": [3, 3], "glenvienhitch": [4, 4], "bmd1973": [7, 5], "thestelt": [8, 6], "tvhitchc": [6, 7], "th3carter3": [5, 8], "detroitcolt": [12, 9], "el_stachio": [9, 10], "trainwrecked09": [13, 11], "callnine11": [11, 12], "cgood113": [16, 13], "chitowncj": [10, 14], "jddegs19": [22, 15], "boilerbits": [15, 16], "dmace3": [19, 17], "pooriejay": [14, 18], "cthinnes4": [26, 19], "kunit30": [23, 20], "iamschitzweak": [24, 21], "edubz66": [17, 22], "ajerdee": [18, 23], "chenaus": [20, 24], "farndaddy": [21, 25], "helliottlaw": [25, 26], "joespeed12": [27, 27], "modogg75": [29, 28], "jeromac": [30, 29], "beermastergeneral": [31, 30], "mgrosh20": [28, 31], "golfer0629": [32, 32], "jgormam858": [33, 33], "damien619": [34, 34], "mrryguy": [35, 35]}}, "2023": {"n": 36, "r": {"callnine11": [1, 1], "chitowncj": [8, 2], "danglesticks": [2, 3], "caliu47": [12, 4], "el_stachio": [3, 5], "cthinnes4": [4, 6], "rbb2321": [14, 7], "boilerbits": [6, 8], "dmace3": [5, 9], "farndaddy": [7, 10], "th3carter3": [15, 11], "glenvienhitch": [9, 12], "tvhitchc": [11, 13], "pooriejay": [10, 14], "milanpi1": [13, 15], "detroitcolt": [20, 16], "thestelt": [16, 17], "helliottlaw": [19, 18], "edubz66": [24, 19], "bmd1973": [18, 20], "chenaus": [22, 21], "g-regg": [23, 22], "trainwrecked09": [17, 23], "damien619": [31, 24], "iamschitzweak": [21, 25], "beermastergeneral": [27, 26], "mizzoutwo7": [25, 27], "golfer0629": [26, 28], "rycmille": [33, 29], "jgormam858": [32, 30], "ajerdee": [29, 31], "mgrosh20": [30, 32], "caseyg": [34, 33], "joespeed12": [28, 34], "modogg75": [35, 35], "jeromac": [36, 36]}}, "2022": {"n": 32, "r": {"glenvienhitch": [1, 1], "thestelt": [2, 2], "milanpi1": [3, 3], "chitowncj": [10, 4], "tvhitchc": [5, 5], "mizzoutwo7": [6, 6], "dmace3": [7, 7], "boilerbits": [4, 8], "farndaddy": [8, 9], "danglesticks": [9, 10], "th3carter3": [11, 11], "callnine11": [14, 12], "joespeed12": [12, 13], "caliu47": [20, 14], "pooriejay": [13, 15], "el_stachio": [16, 16], "jgormam858": [15, 17], "beermastergeneral": [18, 18], "caseyg": [17, 19], "iamschitzweak": [19, 20], "cthinnes4": [21, 21], "detroitcolt": [22, 22], "g-regg": [23, 23], "damien619": [24, 24], "chenaus": [29, 25], "modogg75": [26, 26], "robvassallo1228": [28, 27], "liaobuqi": [30, 28], "bmd1973": [25, 29], "mgrosh20": [27, 30], "nf1064": [31, 31], "trainwrecked09": [32, 32]}}, "2021": {"n": 26, "r": {"glenvienhitch": [1, 1], "trainwrecked09": [2, 3], "pooriejay": [3, 2], "tvhitchc": [5, 4], "mizzoutwo7": [4, 5], "callnine11": [7, 6], "mgrosh20": [8, 8], "farndaddy": [6, 7], "danglesticks": [14, 9], "detroitcolt": [11, 12], "caliu47": [12, 11], "chitowncj": [9, 10], "iamschitzweak": [10, 14], "damien619": [16, 13], "dmace3": [13, 15], "milanpi1": [19, 16], "jgormam858": [18, 17], "cthinnes4": [17, 21], "beermastergeneral": [20, 19], "joespeed12": [24, 20], "kevinlorenz19": [22, 22], "bmd1973": [15, 23], "chenaus": [23, 18], "liaobuqi": [21, 24], "rsj573": [25, 25], "modogg75": [26, 26]}}, "2020": {"n": 26, "r": {"tvhitchc": [1, 1], "beermastergeneral": [5, 3], "mizzoutwo7": [2, 2], "danglesticks": [3, 4], "th3carter3": [6, 5], "caliu47": [4, 6], "farndaddy": [9, 8], "dmace3": [11, 7], "joespeed12": [7, 11], "milanpi1": [15, 12], "detroitcolt": [12, 9], "iamschitzweak": [8, 10], "trainwrecked09": [10, 14], "motown2424": [17, 13], "liaobuqi": [14, 16], "pooriejay": [13, 15], "callnine11": [16, 17], "chitowncj": [19, 19], "chenaus": [18, 18], "reno515": [20, 21], "cthinnes4": [21, 20], "nf1064": [23, 22], "damien619": [24, 23], "alanty20": [22, 24], "johnsonboss": [25, 25], "raoulz22": [26, 26]}}};
+const PAST_SEASONS = {"2025": {"players": 36, "weeks": 18, "sl": ["Brent Tebeau", 2651.6], "cc": ["Brent Tebeau", 2353.86], "high": ["Brent Tebeau", 227.68]}, "2024": {"players": 35, "weeks": 18, "sl": ["Ryan Carter", 2502.46], "cc": ["Ryan Carter", 2170.96], "high": ["Nate Jacobson", 209.14]}, "2023": {"players": 36, "weeks": 18, "sl": ["Rhett Graham", 2651.08], "cc": ["Rhett Graham", 2325.98], "high": ["Auston Chen", 252.88]}, "2022": {"players": 32, "weeks": 18, "sl": ["Glen Hitchcock", 2554.0], "cc": ["Glen Hitchcock", 2226.42], "high": ["Keiji Lansaogorta", 238.18]}, "2021": {"players": 26, "weeks": 17, "sl": ["Glen Hitchcock", 2527.96], "cc": ["Glen Hitchcock", 2168.9], "high": ["Jon Love", 209.14]}, "2020": {"players": 26, "weeks": 16, "sl": ["Troy Hitchcock", 2378.0], "cc": ["Troy Hitchcock", 2044.98], "high": ["Joe Peedikayil", 216.14]}};
+const RECAP_2025 = {"pot": 7200, "players": 36, "cc": [["Brent Tebeau", 2353.86, 900.0], ["Glen Hitchcock", 2304.96, 800.0], ["Ryan Carter", 2290.64, 650.0], ["Nate Jacobson", 2280.1, 350.0], ["Troy Hitchcock", 2270.82, 200.0]], "sl": [["Brent Tebeau", 2651.6, 650.0], ["Ryan Carter", 2603.32, 500.0], ["Nate Jacobson", 2597.86, 350.0], ["Glen Hitchcock", 2587.6, 300.0], ["Troy Hitchcock", 2579.4, 200.0]], "sprints": [["Weeks 1-4", "Brent Tebeau", 591.32], ["Weeks 5-8", "Kyle Young", 675.74], ["Weeks 9-13", "Troy Hitchcock", 840.92], ["Weeks 14-18", "Jon Love", 775.36]], "high": ["Brent Tebeau", 227.68, 100.0], "winners": [[1, "Darius Morris", 132.7], [2, "Anthony Gjonaj", 168.04], [3, "Nate Jacobson", 180.32], [4, "Troy Hitchcock", 186.74], [5, "Brent Tebeau", 211.02], [6, "Eric Wills", 180.0], [7, "Glen Hitchcock", 211.64], [8, "Aaron Jerdee", 169.08], [9, "Larry Hitchcock", 201.9], [10, "Collin Jewett", 191.34], [11, "Ryan Carter", 185.98], [12, "Brent Tebeau", 227.68], [13, "De Smith", 141.04], [14, "Collin Jewett", 167.04], [15, "Charlie Buchanan", 170.7], [16, "Jon Love", 164.68], [17, "Connor Thinnes", 173.84], [18, "Jon Love", 166.46]], "earnings": [["Brent Tebeau", 1950], ["Ryan Carter", 1250], ["Glen Hitchcock", 1200], ["Nate Jacobson", 800], ["Troy Hitchcock", 600], ["Jon Love", 300], ["Collin Jewett", 200], ["Aaron Jerdee", 100], ["Anthony Gjonaj", 100], ["Charlie Buchanan", 100], ["Connor Thinnes", 100], ["Darius Morris", 100], ["De Smith", 100], ["Eric Wills", 100], ["Kyle Young", 100], ["Larry Hitchcock", 100]], "standings": [{"owner": "Brent Tebeau", "sl": 2651.6, "cc": 2353.86}, {"owner": "Glen Hitchcock", "sl": 2587.6, "cc": 2304.96}, {"owner": "Ryan Carter", "sl": 2603.32, "cc": 2290.64}, {"owner": "Nate Jacobson", "sl": 2597.86, "cc": 2280.1}, {"owner": "Troy Hitchcock", "sl": 2579.4, "cc": 2270.82}, {"owner": "Justin Carter", "sl": 2574.58, "cc": 2261.12}, {"owner": "Collin Jewett", "sl": 2423.4, "cc": 2236.76}, {"owner": "Milan Patel", "sl": 2528.9, "cc": 2216.5}, {"owner": "Larry Hitchcock", "sl": 2452.6, "cc": 2166.4}, {"owner": "Darius Morris", "sl": 2444.56, "cc": 2139.48}, {"owner": "Michael Steltenpohl", "sl": 2413.34, "cc": 2115.36}, {"owner": "Jon Love", "sl": 2294.66, "cc": 2111.2}, {"owner": "Arkush Bros", "sl": 2371.6, "cc": 2094.64}, {"owner": "Rhett Graham", "sl": 2366.56, "cc": 2091.48}, {"owner": "Farnia Ghavami", "sl": 2237.74, "cc": 2070.86}, {"owner": "Kyle Young", "sl": 2339.16, "cc": 2069.4}, {"owner": "John Degnan", "sl": 2355.4, "cc": 2064.88}, {"owner": "Aaron Jerdee", "sl": 2352.8, "cc": 2062.7}, {"owner": "Anthony Gjonaj", "sl": 2133.7, "cc": 2038.16}, {"owner": "Charlie Buchanan", "sl": 2194.32, "cc": 2018.84}, {"owner": "Ryan Miller", "sl": 2295.26, "cc": 2007.04}, {"owner": "Rob Vassallo", "sl": 2149.06, "cc": 1988.2}, {"owner": "Chris Good", "sl": 2250.78, "cc": 1977.28}, {"owner": "De Smith", "sl": 2221.6, "cc": 1975.68}, {"owner": "Mike Grosh", "sl": 2229.58, "cc": 1964.28}, {"owner": "Auston Chen", "sl": 2092.64, "cc": 1912.52}, {"owner": "Robert Stong", "sl": 2111.04, "cc": 1892.28}, {"owner": "Brian Danahy", "sl": 2166.54, "cc": 1887.5}, {"owner": "Chris Russell", "sl": 2117.06, "cc": 1861.32}, {"owner": "Harris Elliott", "sl": 2117.16, "cc": 1850.3}, {"owner": "Connor Thinnes", "sl": 2058.96, "cc": 1848.12}, {"owner": "Mo Mohindru", "sl": 1766.04, "cc": 1766.04}, {"owner": "Joe Peedikayil", "sl": 1810.5, "cc": 1746.94}, {"owner": "Jeremy Buchanan", "sl": 1742.1, "cc": 1742.1}, {"owner": "Eric Wills", "sl": 1784.24, "cc": 1717.64}, {"owner": "Damien Iniguez", "sl": 1389.64, "cc": 1389.64}]};
+// NFL_HISTORY_END
+
+/* ======================================================================
+   LEAGUE RULES (static)
+   ====================================================================== */
+const RULES = {
+  fee: 200, weekly: 100, drops: 3, sprintPrize: 100, highPrize: 200,
+  sprints: [[1,4],[5,8],[9,13],[14,18]],
+  cc: [900,800,650,350,250], sl: [650,500,350,300,250], weeksInSeason: 18
+};
+const RIVALRIES = [
+  {name:"The Hitchcock Family", members:["glenvienhitch","IamSchitzweak","tvhitchc"]},
+  {name:"The Buchanan Brothers", members:["Buchanan_C","Jeromac"]},
+  {name:"The Carter Brothers", members:["Th3carter3","Danglesticks"]}
+];
+const ALIASES = {milanmpi1:["milanpi1"]};   // DK name changes, for history lookups
+const ME = "farndaddy";
+
+/* ======================================================================
+   ENGINE — every derived number is computed here from the raw data
+   ====================================================================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const f2 = n => (n==null||isNaN(n)) ? "—" : Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const money = n => "$" + Math.round(n).toLocaleString("en-US");
+const key = dk => String(dk).toLowerCase();
+const DONE = WEEKS.length;                       // completed weeks
+const POT = RULES.fee * PLAYERS.length;
+const byDk = Object.fromEntries(PLAYERS.map(p => [key(p.dk), p]));
+const nameOf = dk => (byDk[key(dk)] || {}).owner || dk;
+const place = n => n + (["th","st","nd","rd"][((n%100)-20)%10] || ["th","st","nd","rd"][n%100] || "th");
+
+function ordinalRank(list, val){           // competition ranking (ties share rank)
+  let rank = 1; list.forEach((x,i)=>{ if(i && val(x) !== val(list[i-1])) rank = i+1; x._r = rank; }); return list;
+}
+function standingsAt(k){                   // after k completed weeks
+  const rows = PLAYERS.map(p=>{
+    const s = p.scores.slice(0,k).map(v => v==null ? 0 : v);
+    const sl = s.reduce((a,b)=>a+b,0);
+    const low = s.slice().sort((a,b)=>a-b).slice(0, k>RULES.drops ? RULES.drops : 0);
+    const cc = sl - low.reduce((a,b)=>a+b,0);
+    const played = p.scores.slice(0,k).filter(v=>v!=null).length;
+    return {p, dk:p.dk, owner:p.owner, sl:+sl.toFixed(2), cc:+cc.toFixed(2), played,
+            avg: played ? sl/played : 0, dropped: low};
+  });
+  const sl = ordinalRank(rows.slice().sort((a,b)=>b.sl-a.sl), x=>x.sl); sl.forEach(x=>x.slRank=x._r);
+  const cc = ordinalRank(rows.slice().sort((a,b)=>b.cc-a.cc), x=>x.cc); cc.forEach(x=>x.ccRank=x._r);
+  return {rows, sl, cc};
+}
+function weekResult(w){                    // w is 1-based
+  const rows = PLAYERS.filter(p=>p.scores[w-1]!=null)
+    .map(p=>({p, dk:p.dk, owner:p.owner, pts:p.scores[w-1], lineup:(LINEUPS[w]||{})[key(p.dk)]||""}))
+    .sort((a,b)=>b.pts-a.pts);
+  ordinalRank(rows, x=>x.pts);
+  const top = rows.length ? rows[0].pts : 0;
+  const winners = rows.filter(r=>r.pts===top);
+  const second = rows.filter(r=>r.pts<top);
+  const secondPts = second.length ? second[0].pts : null;
+  return {rows, winners, seconds: second.filter(r=>r.pts===secondPts), avg: rows.reduce((a,b)=>a+b.pts,0)/(rows.length||1)};
+}
+function parseLineup(s){
+  const out=[]; if(!s) return out;
+  const re=/\b(QB|RB|WR|TE|FLEX|DST)\s+(.+?)(?=\s+(?:QB|RB|WR|TE|FLEX|DST)\s|$)/g; let m;
+  while((m=re.exec(s))) out.push({slot:m[1], name:m[2].trim()});
+  const order={QB:0,RB:1,WR:2,TE:3,FLEX:4,DST:5}; return out.sort((a,b)=>order[a.slot]-order[b.slot]);
+}
+function fptsMap(w){ const m={}; (OWNERSHIP[w]||[]).forEach(r=>{ m[r[0]]={pos:r[1],own:r[2],pts:r[3]}; }); return m; }
+function truePos(name){
+  for(const w in LINEUPS) for(const dk in LINEUPS[w]) for(const x of parseLineup(LINEUPS[w][dk])) if(x.name===name && x.slot!=="FLEX") return x.slot;
+  for(const w in OWNERSHIP) for(const r of OWNERSHIP[w]) if(r[0]===name && r[1]!=="FLEX") return r[1];
+  return "FLEX";
+}
+function sprintTable(si, k){
+  const [a,b] = RULES.sprints[si]; const last = Math.min(b,k);
+  if(k < a) return null;
+  const rows = PLAYERS.map(p=>({p, owner:p.owner, dk:p.dk, t:+p.scores.slice(a-1,last).reduce((s,v)=>s+(v||0),0).toFixed(2)})).sort((x,y)=>y.t-x.t);
+  ordinalRank(rows,x=>x.t);
+  return {a,b,rows,complete:k>=b,weeksIn:last-a+1};
+}
+function earningsAt(k){
+  const e = Object.fromEntries(PLAYERS.map(p=>[key(p.dk),{weekly:0,wins:0,sprint:0,high:0,cc:0,sl:0}]));
+  for(let w=1; w<=k; w++){ const r=weekResult(w); r.winners.forEach(x=>{ e[key(x.dk)].weekly += RULES.weekly/r.winners.length; e[key(x.dk)].wins += 1/r.winners.length; }); }
+  RULES.sprints.forEach((s,i)=>{ const t=sprintTable(i,k); if(t && t.complete){ const top=t.rows.filter(r=>r.t===t.rows[0].t); top.forEach(r=> e[key(r.dk)].sprint += RULES.sprintPrize/top.length); }});
+  if(k>=RULES.weeksInSeason){
+    let hi=-1, who=[]; PLAYERS.forEach(p=>p.scores.forEach(v=>{ if(v==null) return; if(v>hi){hi=v;who=[p];} else if(v===hi && !who.includes(p)) who.push(p); }));
+    who.forEach(p=> e[key(p.dk)].high += RULES.highPrize/who.length);
+    const st=standingsAt(k); payPlaces(st.cc,"cc",RULES.cc,e); payPlaces(st.sl,"sl",RULES.sl,e);
+  }
+  Object.values(e).forEach(x=> x.total = x.weekly+x.sprint+x.high+x.cc+x.sl);
+  return e;
+}
+function payPlaces(sorted, k, amts, e){
+  let i=0; while(i<amts.length && i<sorted.length){ let j=i; while(j+1<sorted.length && sorted[j+1][k]===sorted[i][k]) j++;
+    let pool=0; for(let q=i;q<=j;q++) pool+=(amts[q]||0); for(let q=i;q<=j;q++) e[key(sorted[q].dk)][k]+=pool/(j-i+1); i=j+1; }
+}
+function projectedPayouts(st){            // "if the season ended today"
+  const e = Object.fromEntries(PLAYERS.map(p=>[key(p.dk),{cc:0,sl:0}]));
+  payPlaces(st.cc,"cc",RULES.cc,e); payPlaces(st.sl,"sl",RULES.sl,e); return e;
+}
+function highWeek(k){ let best=null; PLAYERS.forEach(p=>p.scores.slice(0,k).forEach((v,i)=>{ if(v!=null && (!best||v>best.v)) best={v,p,w:i+1}; })); return best; }
+
+/* ======================================================================
+   RENDER HELPERS
+   ====================================================================== */
+const who = (owner, dk) => `<span class="own">${esc(owner)}</span><div class="dkn">${esc(dk)}</div>`;
+const rk = r => `<span class="rk num ${r<=3?'rk'+r:''}">${r}</span>`;
+const mv = d => d>0 ? `<span class="up">+${d}</span>` : d<0 ? `<span class="down">${d}</span>` : `<span class="flat">—</span>`;
+const isMe = dk => key(dk)===ME ? "me" : "";
+function lineupHTML(s, w){
+  if(!s) return `<span class="pill n">No lineup — joined late, assigned last-place score</span>`;
+  const fp=fptsMap(w);
+  return parseLineup(s).map(x=>`<span class="pos">${x.slot}</span><b>${esc(x.name)}</b> <span class="muted">${fp[x.name]?(+fp[x.name].pts).toFixed(1):""}</span>`).join(" &nbsp; ");
+}
+function section(id, title, sub, body){ document.getElementById(id).innerHTML = `<div class="sh"><h2>${title}${sub?`<small>${sub}</small>`:""}</h2></div>${body}`; }
+function lineChart(series, opts){           // simple multi-line SVG (rank or points)
+  const W=720,H=260,P={l:40,r:16,t:14,b:28}; const xs=series[0].vals.length;
+  const all=series.flatMap(s=>s.vals).filter(v=>v!=null); let lo=Math.min(...all), hi=Math.max(...all);
+  if(opts.invert){ lo=1; } if(lo===hi){hi+=1;}
+  const X=i=> P.l + (xs===1?0.5:i/(xs-1))*(W-P.l-P.r);
+  const Y=v=> opts.invert ? P.t + (v-lo)/(hi-lo)*(H-P.t-P.b) : P.t + (1-(v-lo)/(hi-lo))*(H-P.t-P.b);
+  const colors=["#E8591A","#f2c14e","#6fa8ff","#4cc38a","#c9d1dc"];
+  let g=""; for(let t=0;t<=4;t++){ const v=lo+(hi-lo)*t/4; g+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(255,255,255,.07)"/><text x="${P.l-6}" y="${Y(v)+4}" text-anchor="end" font-size="10" fill="#9fb0cc">${opts.invert?Math.round(v):Math.round(v)}</text>`; }
+  for(let i=0;i<xs;i++) g+=`<text x="${X(i)}" y="${H-8}" text-anchor="middle" font-size="10" fill="#9fb0cc">W${i+1}</text>`;
+  series.forEach((s,si)=>{ const pts=s.vals.map((v,i)=>v==null?null:[X(i),Y(v)]).filter(Boolean);
+    g+=`<polyline fill="none" stroke="${colors[si%5]}" stroke-width="2.5" points="${pts.map(p=>p.join(",")).join(" ")}"/>`;
+    pts.forEach(p=> g+=`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="${colors[si%5]}"/>`); });
+  const legend=series.map((s,si)=>`<span style="display:inline-flex;align-items:center;gap:6px;margin-right:14px;font-size:12px"><i style="width:12px;height:3px;background:${colors[si%5]};display:inline-block"></i>${esc(s.name)}</span>`).join("");
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(opts.label||'chart')}">${g}</svg><div style="margin-top:6px">${legend}</div>`;
+}
+
+/* ======================================================================
+   TABS
+   ====================================================================== */
+const TABS=[["overview","Overview"],["weekly","Weekly"],["standings","Standings"],["movers","Movers"],["earnings","Earnings"],["winners","Weekly Winners"],["analysis","Analysis"],["rivalry","Rivalry"],["lab","NFL Lab"],["payouts","Payouts"],["history","History"]];
+function showTab(id){ document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.dataset.t===id)); document.querySelectorAll(".section").forEach(s=>s.classList.toggle("active",s.id===id)); try{history.replaceState(null,"","#"+id);}catch(e){} window.scrollTo({top:0}); }
+
+/* ---------------------------------------------------------------- OVERVIEW */
+function renderOverview(){
+  if(!DONE){ section("overview","Overview","",`<div class="empty">Week 1 results will appear here.</div>`); return; }
+  const r=weekResult(DONE), st=standingsAt(DONE), hw=highWeek(DONE), W=r.winners, top=W[0];
+  const earn=earningsAt(DONE); const moneyTop=Object.entries(earn).filter(([k,v])=>v.total>0).sort((a,b)=>b[1].total-a[1].total).slice(0,5);
+  const curSprint = RULES.sprints.findIndex(s=>DONE<=s[1]); const sp = sprintTable(curSprint<0?3:curSprint, DONE);
+  const banner=`<div class="banner">
+    <div style="position:relative;z-index:1">
+      <div class="eyebrow">Week ${DONE} winner${W.length>1?"s (tie — $100 split)":" · $"+RULES.weekly}</div>
+      <div class="who">${W.map(x=>esc(x.owner)).join(" & ")}</div>
+      <div class="dk">${W.map(x=>esc(x.dk)).join(" / ")}</div>
+      <div class="pts num">${f2(top.pts)}<small>pts</small></div>
+      <div class="lu">${W.length===1?lineupHTML(top.lineup,DONE).replace(/class="muted"/g,'style="opacity:.75"'):""}</div>
+    </div>
+    <div class="podium">${r.rows.slice(0,5).map(x=>`<div class="pod"><span class="p">${x._r}</span><div><div class="n">${esc(x.owner)}</div><div class="d">${esc(x.dk)}</div></div><span class="sc num">${f2(x.pts)}</span></div>`).join("")}</div>
+  </div>`;
+  const kpis=`<div class="grid g4 mb">
+    <div class="card kpi"><div class="v num">${money(POT)}</div><div class="l">Total pot</div><div class="s">${PLAYERS.length} players × ${money(RULES.fee)}</div></div>
+    <div class="card kpi"><div class="v num">${DONE} / ${RULES.weeksInSeason}</div><div class="l">Weeks complete</div><div class="s">League avg this week ${f2(r.avg)}</div></div>
+    <div class="card kpi"><div class="v">${esc(st.cc[0].owner)}</div><div class="l">Champions Circle leader</div><div class="s">${f2(st.cc[0].cc)} pts${DONE<=RULES.drops?" · drops start at Week ${RULES.drops+1}":""}</div></div>
+    <div class="card kpi"><div class="v num">${f2(hw.v)}</div><div class="l">Season high week</div><div class="s">${esc(hw.p.owner)} · Week ${hw.w} · $${RULES.highPrize} at season end</div></div>
+  </div>`;
+  const cc=`<div class="card accent"><h3>Champions Circle <span class="tag">top 10 · ${DONE>RULES.drops?`best ${DONE-RULES.drops} of ${DONE} weeks`:`drops start at Week ${RULES.drops+1}`}</span></h3>${st.cc.slice(0,10).map(x=>`<div class="row ${isMe(x.dk)}"><span class="pl">${x.ccRank}</span><div class="nm"><span class="own">${esc(x.owner)}</span></div><span class="vl num">${f2(x.cc)}</span></div>`).join("")}<p class="small muted" style="margin-top:10px">Full tables in Standings.</p></div>`;
+  const spr=`<div class="card accent"><h3>Sprint race <span class="tag">Weeks ${sp.a}-${sp.b} · $${RULES.sprintPrize} · ${sp.complete?"final":"week "+sp.weeksIn+" of "+(sp.b-sp.a+1)}</span></h3>${sp.rows.slice(0,5).map(x=>`<div class="row"><span class="pl">${x._r}</span><div class="nm"><span class="own">${esc(x.owner)}</span><div class="dkn">${esc(x.dk)}</div></div><span class="vl num">${f2(x.t)}</span></div>`).join("")}</div>`;
+  const mon=`<div class="card accent"><h3>Money board <span class="tag">paid to date</span></h3>${moneyTop.length?moneyTop.map(([k,v],i)=>`<div class="row"><span class="pl">${i+1}</span><div class="nm"><span class="own">${esc(nameOf(k))}</span><div class="dkn">${v.wins?(+v.wins.toFixed(2))+" weekly win"+(v.wins===1?"":"s"):""}</div></div><span class="vl num">${money(v.total)}</span></div>`).join(""):`<div class="muted">No money paid yet.</div>`}</div>`;
+  section("overview",`Week ${DONE} in the books`,`${r.rows.length} lineups scored · updated after the Sunday main slate`, banner+kpis+`<div class="grid g3">${cc}${spr}${mon}</div>`);
+}
+
+/* ---------------------------------------------------------------- WEEKLY */
+function renderWeekly(sel){
+  const w = sel || DONE; if(!DONE){ section("weekly","Weekly results","",`<div class="empty">No weeks yet.</div>`); return; }
+  const r=weekResult(w);
+  const opts=WEEKS.map(x=>`<option value="${x.wk}" ${x.wk===w?"selected":""}>${x.label}</option>`).join("");
+  const rows=r.rows.map(x=>{ const prize = r.winners.includes(x) ? `<span class="pill">$${+(RULES.weekly/r.winners.length).toFixed(2)}</span>` : r.seconds.includes(x) ? `<span class="pill n">2nd</span>` : "";
+    return `<tr class="${r.winners.includes(x)?'hl':''} ${isMe(x.dk)}"><td>${rk(x._r)}</td><td>${who(x.owner,x.dk)}</td><td class="r tot num">${f2(x.pts)}</td><td class="r num ${x.pts>=r.avg?'up':'down'}">${x.pts>=r.avg?"+":""}${f2(x.pts-r.avg)}</td><td>${prize}</td><td class="lu-cell">${lineupHTML(x.lineup,w)}</td></tr>`; }).join("");
+  document.getElementById("weekly").innerHTML=`<div class="sh"><h2>Weekly results<small>Every lineup, ranked · league average ${f2(r.avg)}</small></h2><select id="wkSel" aria-label="Week">${opts}</select></div>
+    <div class="tw"><table><thead><tr><th>#</th><th>Player</th><th class="r">Points</th><th class="r">vs Avg</th><th></th><th>Lineup (player points)</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  $("#wkSel").onchange=e=>renderWeekly(+e.target.value);
+}
+
+/* ---------------------------------------------------------------- STANDINGS */
+function renderStandings(mode){
+  mode = mode || "cc"; if(!DONE){ section("standings","Standings","",`<div class="empty">No weeks yet.</div>`); return; }
+  const st=standingsAt(DONE), list = mode==="cc"?st.cc:st.sl, lead=list[0][mode];
+  const proj=projectedPayouts(st);
+  const head=WEEKS.map(w=>`<th class="c">W${w.wk}</th>`).join("");
+  const wk = WEEKS.map(w=>weekResult(w.wk));
+  const rows=list.map(x=>{
+    const drops=new Set(); if(mode==="cc" && DONE>RULES.drops){ const idx=x.p.scores.slice(0,DONE).map((v,i)=>[v==null?0:v,i]).sort((a,b)=>a[0]-b[0]).slice(0,RULES.drops).map(a=>a[1]); idx.forEach(i=>drops.add(i)); }
+    const cells=x.p.scores.slice(0,DONE).map((v,i)=>{ const win = wk[i].winners.some(z=>z.dk===x.dk);
+      return `<td class="c num" style="${win?'color:#ffc2a6;font-weight:700;':''}${drops.has(i)?'text-decoration:line-through;opacity:.45;':''}">${v==null?"—":f2(v)}</td>`; }).join("");
+    const pay = proj[key(x.dk)][mode];
+    return `<tr class="${isMe(x.dk)}"><td class="sticky1">${rk(mode==="cc"?x.ccRank:x.slRank)}</td><td>${who(x.owner,x.dk)}</td><td class="r tot num">${f2(x[mode])}</td><td class="r num muted">${x[mode]===lead?"—":"-"+f2(lead-x[mode])}</td><td class="r num">${f2(x.avg)}</td><td class="c">${pay?`<span class="pill">${money(pay)}</span>`:""}</td>${cells}</tr>`; }).join("");
+  document.getElementById("standings").innerHTML=`<div class="sh"><h2>Standings<small>${mode==="cc"?`Champions Circle = season total minus your ${RULES.drops} lowest weeks (a missed week counts as a drop). ${DONE<=RULES.drops?"Drops start at Week 4.":""}`:"Season-Long = raw season total, every week counts."}</small></h2>
+    <div class="seg"><button data-m="cc" class="${mode==="cc"?"on":""}">Champions Circle</button><button data-m="sl" class="${mode==="sl"?"on":""}">Season-Long</button></div></div>
+    <div class="tw"><table class="heat"><thead><tr><th class="sticky1">#</th><th>Player</th><th class="r">${mode==="cc"?"Champions Circle":"Season-Long"}</th><th class="r">Back</th><th class="r">Avg</th><th class="c">If it ended today</th>${head}</tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="small muted" style="margin-top:10px">Orange = weekly win. ${mode==="cc"?"Struck-through = currently dropped.":""}</p>`;
+  document.querySelectorAll("#standings .seg button").forEach(b=>b.onclick=()=>renderStandings(b.dataset.m));
+}
+
+/* ---------------------------------------------------------------- MOVERS */
+function renderMovers(){
+  if(DONE<2){ section("movers","Movers","Rank changes week over week",`<div class="empty">Movers start after Week 2 — there is nothing to move from yet. Week 1 order is in Standings.</div>`); return; }
+  const now=standingsAt(DONE), prev=standingsAt(DONE-1);
+  const pr=Object.fromEntries(prev.rows.map(x=>[key(x.dk),x]));
+  const rows=now.rows.map(x=>({x, dcc: pr[key(x.dk)].ccRank - x.ccRank, dsl: pr[key(x.dk)].slRank - x.slRank}));
+  const list=(k,dir)=>rows.slice().sort((a,b)=>dir*(b[k]-a[k])).slice(0,5).map(r=>`<div class="row"><div class="nm"><span class="own">${esc(r.x.owner)}</span><div class="dkn">now ${place(k==="dcc"?r.x.ccRank:r.x.slRank)}</div></div>${mv(r[k])}</div>`).join("");
+  const all=now.cc.map(x=>{ const r=rows.find(z=>z.x===x); return `<tr class="${isMe(x.dk)}"><td>${rk(x.ccRank)}</td><td>${who(x.owner,x.dk)}</td><td class="c">${mv(r.dcc)}</td><td class="r num">${f2(x.cc)}</td><td class="c">${x.slRank}</td><td class="c">${mv(r.dsl)}</td></tr>`; }).join("");
+  const top5=now.cc.slice(0,5).map(x=>({name:x.owner, vals:WEEKS.map(w=>standingsAt(w.wk).rows.find(z=>z.dk===x.dk).ccRank)}));
+  section("movers","Movers",`Week ${DONE-1} to Week ${DONE}`,`<div class="grid g4 mb">
+    <div class="card accent"><h3>Champions Circle risers</h3>${list("dcc",1)}</div><div class="card accent"><h3>Champions Circle fallers</h3>${list("dcc",-1)}</div>
+    <div class="card accent"><h3>Season-Long risers</h3>${list("dsl",1)}</div><div class="card accent"><h3>Season-Long fallers</h3>${list("dsl",-1)}</div></div>
+    <div class="card mb"><h3>Current top 5 — Champions Circle rank by week</h3>${lineChart(top5,{invert:true,label:"Rank by week"})}</div>
+    <div class="tw"><table><thead><tr><th>#</th><th>Player</th><th class="c">Move</th><th class="r">Champions Circle</th><th class="c">Season-Long #</th><th class="c">Move</th></tr></thead><tbody>${all}</tbody></table></div>`);
+}
+
+/* ---------------------------------------------------------------- EARNINGS */
+function renderEarnings(){
+  const e=earningsAt(DONE), st=standingsAt(DONE), proj=projectedPayouts(st);
+  const rows=PLAYERS.map(p=>({p, e:e[key(p.dk)], pr:proj[key(p.dk)]})).map(x=>({...x, projTotal: x.e.weekly+x.e.sprint+x.pr.cc+x.pr.sl}))
+    .sort((a,b)=> b.e.total-a.e.total || b.projTotal-a.projTotal || a.p.owner.localeCompare(b.p.owner));
+  const paid=Object.values(e).reduce((a,b)=>a+b.total,0);
+  const tr=rows.filter(x=>x.e.total>0||x.projTotal>0).map(x=>`<tr class="${isMe(x.p.dk)}"><td>${who(x.p.owner,x.p.dk)}</td><td class="c">${x.e.wins?+x.e.wins.toFixed(2):""}</td><td class="r num">${x.e.weekly?money(x.e.weekly):""}</td><td class="r num">${x.e.sprint?money(x.e.sprint):""}</td><td class="r tot num">${x.e.total?money(x.e.total):"—"}</td><td class="r num muted">${(x.pr.cc+x.pr.sl)?money(x.pr.cc+x.pr.sl):""}</td><td class="r num">${money(x.projTotal)}</td></tr>`).join("");
+  section("earnings","Earnings",`Paid to date: ${money(paid)} of ${money(POT)} · payment details stay in the master sheet`,
+   `<div class="grid g3 mb">
+      <div class="card kpi"><div class="v num">${money(paid)}</div><div class="l">Won so far</div><div class="s">Weekly wins${DONE>=4?" + sprints":""}</div></div>
+      <div class="card kpi"><div class="v num">${money(POT-paid)}</div><div class="l">Still on the table</div><div class="s">Sprints, high score, final payouts</div></div>
+      <div class="card kpi"><div class="v num">${Object.values(e).filter(x=>x.total>0).length}</div><div class="l">Players in the money</div><div class="s">of ${PLAYERS.length}</div></div></div>
+    <div class="tw"><table><thead><tr><th>Player</th><th class="c">Wins</th><th class="r">Weekly</th><th class="r">Sprints</th><th class="r">Paid to date</th><th class="r">Final payout if it ended today</th><th class="r">Projected total</th></tr></thead><tbody>${tr||`<tr><td colspan="7" class="muted">No money yet.</td></tr>`}</tbody></table></div>
+    <p class="small muted" style="margin-top:10px">Ties split the money. Sprint money is paid when the sprint's last week is in. High score ($${RULES.highPrize}) and final Champions Circle / Season-Long payouts are paid after Week 18.</p>`);
+}
+
+/* ---------------------------------------------------------------- WEEKLY WINNERS */
+function renderWinners(){
+  const rows=WEEKS.map(w=>{ const r=weekResult(w.wk); return `<tr><td class="oswald">Week ${w.wk}</td><td>${r.winners.map(x=>who(x.owner,x.dk)).join("")}</td><td class="r tot num">${f2(r.winners[0].pts)}</td><td>${r.seconds.map(x=>who(x.owner,x.dk)).join("")}</td><td class="r num">${r.seconds.length?f2(r.seconds[0].pts):""}</td><td class="r num muted">${f2(r.winners[0].pts-(r.seconds[0]||{pts:r.winners[0].pts}).pts)}</td><td class="r num muted">${f2(r.avg)}</td></tr>`; }).join("");
+  const future=[]; for(let w=DONE+1; w<=RULES.weeksInSeason; w++) future.push(`<tr><td class="oswald muted">Week ${w}</td><td colspan="6" class="muted">—</td></tr>`);
+  const counts={}; WEEKS.forEach(w=>weekResult(w.wk).winners.forEach(x=>counts[x.owner]=(counts[x.owner]||0)+1));
+  section("winners","Weekly Winners",`$${RULES.weekly} to the top score every week · 2nd place gets bragging rights`,
+   `<div class="tw mb"><table><thead><tr><th>Week</th><th>Winner</th><th class="r">Points</th><th>2nd place</th><th class="r">Points</th><th class="r">Margin</th><th class="r">League avg</th></tr></thead><tbody>${rows}${future.join("")}</tbody></table></div>
+    <div class="card"><h3>Win count</h3>${Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([n,c])=>`<div class="row"><div class="nm"><span class="own">${esc(n)}</span></div><span class="vl num">${c}</span></div>`).join("")||'<div class="muted">No wins yet.</div>'}</div>`);
+}
+
+/* ---------------------------------------------------------------- ANALYSIS */
+function renderAnalysis(sel){
+  const weeks=Object.keys(NOTES).map(Number).sort((a,b)=>b-a);
+  if(!weeks.length){ section("analysis","Analysis","",`<div class="empty">The weekly write-up lands here after each update.</div>`); return; }
+  const w=sel||weeks[0], n=NOTES[w];
+  document.getElementById("analysis").innerHTML=`<div class="sh"><h2>Analysis<small>The weekly write-up. Nobody is safe.</small></h2><select id="anSel" aria-label="Week">${weeks.map(x=>`<option value="${x}" ${x===w?"selected":""}>Week ${x}</option>`).join("")}</select></div>
+   <div class="card note"><div class="meta">Week ${w}</div><h3>${n.title}</h3>${n.body}${n.awards?`<div class="awards">${n.awards.map(a=>`<div class="award"><div class="t">${a[0]}</div><div class="w">${a[1]}</div><div class="x">${a[2]}</div></div>`).join("")}</div>`:""}</div>`;
+  $("#anSel").onchange=e=>renderAnalysis(+e.target.value);
+}
+
+/* ---------------------------------------------------------------- RIVALRY */
+function histRank(dk, yr){ const H=HISTORY_RANKS[yr]; if(!H) return null; const ks=[key(dk),...(ALIASES[key(dk)]||[])]; for(const k of ks) if(H.r[k]) return H.r[k]; return null; }
+function renderRivalry(){
+  if(!DONE){ section("rivalry","Rivalry","",`<div class="empty">No weeks yet.</div>`); return; }
+  const st=standingsAt(DONE);
+  const blocks=RIVALRIES.map(g=>{
+    const mem=g.members.map(d=>st.rows.find(x=>key(x.dk)===key(d))).filter(Boolean);
+    const famWins={}; mem.forEach(m=>famWins[m.dk]=0);
+    const wkRows=WEEKS.map(w=>{ const sc=mem.map(m=>m.p.scores[w.wk-1]); const best=Math.max(...sc.filter(v=>v!=null));
+      mem.forEach((m,i)=>{ if(sc[i]===best) famWins[m.dk]++; });
+      return `<tr><td class="oswald">W${w.wk}</td>${sc.map(v=>`<td class="r num" style="${v===best?'color:#ffc2a6;font-weight:700':''}">${v==null?"—":f2(v)}</td>`).join("")}</tr>`; }).join("");
+    const h2h = mem.length>2 ? `<h3 style="margin-top:18px">Head-to-head record</h3><div class="tw"><table><thead><tr><th></th>${mem.map(m=>`<th class="c">vs ${esc(m.owner.split(" ")[0])}</th>`).join("")}</tr></thead><tbody>${mem.map(a=>`<tr><td class="own">${esc(a.owner)}</td>${mem.map(b=>{ if(a===b) return `<td class="c muted">—</td>`; let wn=0,ls=0; WEEKS.forEach(w=>{const x=a.p.scores[w.wk-1]||0,y=b.p.scores[w.wk-1]||0; if(x>y)wn++; else if(y>x)ls++;}); return `<td class="c num">${wn}-${ls}</td>`; }).join("")}</tr>`).join("")}</tbody></table></div>` : "";
+    const lead=mem.slice().sort((a,b)=>b.sl-a.sl);
+    const gap = lead.length>1 ? `${esc(lead[0].owner)} leads ${esc(lead[1].owner)} by ${f2(lead[0].sl-lead[1].sl)}` : "";
+    const years=[2025,2024,2023,2022,2021,2020];
+    const past=`<h3 style="margin-top:18px">Family history <span class="tag">Season-Long finish</span></h3><div class="tw"><table><thead><tr><th>Season</th>${mem.map(m=>`<th class="c">${esc(m.owner.split(" ")[0])}</th>`).join("")}</tr></thead><tbody>${years.map(y=>{ const rs=mem.map(m=>histRank(m.dk,y)); if(rs.every(r=>!r)) return ""; const best=Math.min(...rs.filter(Boolean).map(r=>r[0])); return `<tr><td class="oswald">${y}</td>${rs.map(r=>`<td class="c num" style="${r&&r[0]===best?'color:#ffc2a6;font-weight:700':''}">${r?place(r[0]):"—"}</td>`).join("")}</tr>`; }).join("")}</tbody></table></div>`;
+    return `<div class="card accent mb"><h3>${esc(g.name)} <span class="tag">${gap}</span></h3>
+      <div class="grid g${Math.min(mem.length,3)} mb">${lead.map((m,i)=>`<div class="card" style="background:var(--card2)"><div class="small muted">${i===0?"Family leader":place(i+1)+" in the family"}</div><div class="oswald" style="font-size:22px;color:#fff;margin-top:4px">${esc(m.owner)}</div><div class="small muted">${esc(m.dk)}</div>
+        <div style="display:flex;gap:18px;margin-top:10px"><div><div class="num oswald" style="font-size:20px">${f2(m.sl)}</div><div class="small muted">Season-Long · ${place(m.slRank)}</div></div><div><div class="num oswald" style="font-size:20px">${famWins[m.dk]}</div><div class="small muted">family week wins</div></div></div></div>`).join("")}</div>
+      <div class="tw"><table><thead><tr><th>Week</th>${mem.map(m=>`<th class="r">${esc(m.owner.split(" ")[0])}</th>`).join("")}</tr></thead><tbody>${wkRows}</tbody></table></div>${h2h}${past}</div>`;
+  }).join("");
+  section("rivalry","Rivalry","Family bragging rights. More rivalries can be added any time.",blocks);
+}
+
+/* ---------------------------------------------------------------- NFL LAB */
+function renderLab(sel){
+  if(!DONE){ section("lab","NFL Lab","",`<div class="empty">No weeks yet.</div>`); return; }
+  const w=sel||DONE, fp=fptsMap(w), own=OWNERSHIP[w]||[], lus=LINEUPS[w]||{}, nLu=Object.keys(lus).length;
+  const rosteredBy=name=>Object.entries(lus).filter(([dk,s])=>parseLineup(s).some(x=>x.name===name)).map(([dk])=>nameOf(dk));
+  const chalk=own.slice().sort((a,b)=>b[2]-a[2]).slice(0,10);
+  const maxOwn=chalk.length?chalk[0][2]:1;
+  const chalkHTML=chalk.map(r=>`<div class="row"><div class="nm"><span class="own">${esc(r[0])} <span class="pos">${r[1]==="FLEX"?truePos(r[0]):r[1]}</span></span><div class="bar"><i style="width:${r[2]/maxOwn*100}%"></i></div></div><div style="text-align:right"><div class="vl num">${f2(r[2]).replace(/0$/,"")}%</div><div class="small ${r[3]>=15?'up':'down'}">${f2(r[3])} pts</div></div></div>`).join("");
+  const low=own.filter(r=>r[2]<=12).sort((a,b)=>b[3]-a[3]).slice(0,8);
+  const lowHTML=low.map(r=>`<div class="row"><div class="nm"><span class="own">${esc(r[0])} <span class="pos">${r[1]==="FLEX"?truePos(r[0]):r[1]}</span></span><div class="dkn">${rosteredBy(r[0]).map(esc).join(", ")}</div></div><div style="text-align:right"><div class="vl num">${f2(r[3])}</div><div class="small muted">${f2(r[2]).replace(/0$/,"")}% owned</div></div></div>`).join("");
+  // position leaders among rostered players
+  const posBest={QB:[],RB:[],WR:[],TE:[],DST:[]};
+  own.forEach(r=>{ const p=r[1]==="FLEX"?truePos(r[0]):r[1]; if(posBest[p]) posBest[p].push(r); });
+  const posHTML=Object.entries(posBest).map(([p,l])=>{ const b=l.sort((a,c)=>c[3]-a[3]).slice(0,3); return `<div class="card" style="background:var(--card2)"><h3>${p}</h3>${b.map((r,i)=>`<div class="row"><span class="pl">${i+1}</span><div class="nm"><span class="own">${esc(r[0])}</span><div class="dkn">${f2(r[2]).replace(/0$/,"")}% · ${rosteredBy(r[0]).length} lineup${rosteredBy(r[0]).length===1?"":"s"}</div></div><span class="vl num">${f2(r[3])}</span></div>`).join("")}</div>`; }).join("");
+  // stacks
+  const res=weekResult(w); const stackRows=[];
+  res.rows.forEach(x=>{ if(!x.lineup) return; const L=parseLineup(x.lineup); const qb=L.find(z=>z.slot==="QB"); if(!qb||!TEAMS[qb.name]) { stackRows.push({x,stack:null}); return; }
+    const mates=L.filter(z=>z!==qb && z.slot!=="DST" && TEAMS[z.name]===TEAMS[qb.name]); stackRows.push({x,qb,mates,team:TEAMS[qb.name],stack:mates.length?true:false}); });
+  const stacked=stackRows.filter(s=>s.stack===true), naked=stackRows.filter(s=>s.stack===false);
+  const avg=a=>a.length?a.reduce((s,v)=>s+v.x.pts,0)/a.length:0;
+  const stackHTML=`<div class="grid g3 mb"><div class="card kpi" style="background:var(--card2)"><div class="v num">${stacked.length}</div><div class="l">Lineups with a QB stack</div><div class="s">avg ${f2(avg(stacked))} pts</div></div><div class="card kpi" style="background:var(--card2)"><div class="v num">${naked.length}</div><div class="l">QB with no teammate</div><div class="s">avg ${f2(avg(naked))} pts</div></div><div class="card kpi" style="background:var(--card2)"><div class="v num">${f2(avg(stacked)-avg(naked))}</div><div class="l">Stack edge (pts)</div><div class="s">stacked minus unstacked</div></div></div>
+    <div class="tw"><table><thead><tr><th>#</th><th>Player</th><th>Stack</th><th class="r">QB</th><th class="r">Pass catchers</th><th class="r">Lineup</th></tr></thead><tbody>${stacked.map(s=>`<tr><td>${rk(s.x._r)}</td><td>${who(s.x.owner,s.x.dk)}</td><td><span class="pill">${s.team}</span> ${esc(s.qb.name)} + ${s.mates.map(m=>esc(m.name)).join(" + ")}</td><td class="r num">${f2((fp[s.qb.name]||{}).pts)}</td><td class="r num">${f2(s.mates.reduce((a,m)=>a+((fp[m.name]||{}).pts||0),0))}</td><td class="r tot num">${f2(s.x.pts)}</td></tr>`).join("")||`<tr><td colspan="6" class="muted">No stacks detected.</td></tr>`}</tbody></table></div>`;
+  // hindsight lineup: best possible from rostered players (no salary cap)
+  const pool=own.map(r=>({name:r[0],pos:r[1]==="FLEX"?truePos(r[0]):r[1],pts:r[3],own:r[2]}));
+  const pick=(pos,n,used)=>pool.filter(p=>p.pos===pos && !used.has(p.name)).sort((a,b)=>b.pts-a.pts).slice(0,n);
+  const used=new Set(), H=[]; [["QB",1],["RB",2],["WR",3],["TE",1],["DST",1]].forEach(([p,n])=>pick(p,n,used).forEach(x=>{used.add(x.name);H.push({slot:p,...x});}));
+  const flex=pool.filter(p=>["RB","WR","TE","FLEX"].includes(p.pos)&&!used.has(p.name)).sort((a,b)=>b.pts-a.pts)[0]; if(flex) H.push({slot:"FLEX",...flex});
+  const hTot=H.reduce((a,b)=>a+b.pts,0);
+  const hindHTML=`<div class="card accent"><h3>Hindsight lineup <span class="tag">best 9 from players someone in the league rostered · no salary cap</span></h3>${H.map(x=>`<div class="row"><span class="pos">${x.slot}</span><div class="nm"><span class="own">${esc(x.name)}</span><div class="dkn">${f2(x.own).replace(/0$/,"")}% owned</div></div><span class="vl num">${f2(x.pts)}</span></div>`).join("")}<div class="row"><div class="nm"><span class="own">Total</span><div class="dkn">winner scored ${f2(res.winners[0].pts)}</div></div><span class="vl num" style="color:var(--orange2)">${f2(hTot)}</span></div></div>`;
+  // uniqueness
+  const uniq=res.rows.filter(x=>x.lineup).map(x=>({x, o:parseLineup(x.lineup).reduce((a,z)=>a+((fp[z.name]||{}).own||0),0)})).sort((a,b)=>a.o-b.o);
+  const uniqHTML=`<div class="card accent"><h3>Chalk meter <span class="tag">sum of ownership across 9 slots</span></h3>
+    <div class="small muted" style="margin-bottom:6px">Most contrarian</div>${uniq.slice(0,3).map(u=>`<div class="row"><div class="nm"><span class="own">${esc(u.x.owner)}</span><div class="dkn">finished ${place(u.x._r)} · ${f2(u.x.pts)} pts</div></div><span class="vl num">${Math.round(u.o)}%</span></div>`).join("")}
+    <div class="small muted" style="margin:12px 0 6px">Chalkiest</div>${uniq.slice(-3).reverse().map(u=>`<div class="row"><div class="nm"><span class="own">${esc(u.x.owner)}</span><div class="dkn">finished ${place(u.x._r)} · ${f2(u.x.pts)} pts</div></div><span class="vl num">${Math.round(u.o)}%</span></div>`).join("")}</div>`;
+  const opts=WEEKS.map(x=>`<option value="${x.wk}" ${x.wk===w?"selected":""}>${x.label}</option>`).join("");
+  document.getElementById("lab").innerHTML=`<div class="sh"><h2>NFL Lab<small>Who the league rostered, what hit, and what didn't · ${nLu} lineups submitted</small></h2><select id="labSel" aria-label="Week">${opts}</select></div>
+   <div class="grid g2 mb"><div class="card accent"><h3>Most rostered <span class="tag">league ownership · points scored</span></h3>${chalkHTML}</div><div class="card accent"><h3>Best low-owned plays <span class="tag">12% owned or less</span></h3>${lowHTML}</div></div>
+   <div class="sh" style="margin-top:8px"><h2 style="font-size:20px">Position leaders<small>Top rostered scorer at each spot</small></h2></div><div class="grid g4 mb" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">${posHTML}</div>
+   <div class="sh" style="margin-top:8px"><h2 style="font-size:20px">QB stacks<small>QB paired with his own pass catchers · teams are tracked for common stack players</small></h2></div>${stackHTML}
+   <div class="grid g2" style="margin-top:16px">${hindHTML}${uniqHTML}</div>`;
+  $("#labSel").onchange=e=>renderLab(+e.target.value);
+}
+
+/* ---------------------------------------------------------------- PAYOUTS */
+function renderPayouts(){
+  const wk=RULES.weekly*RULES.weeksInSeason, sp=RULES.sprintPrize*RULES.sprints.length, cc=RULES.cc.reduce((a,b)=>a+b,0), sl=RULES.sl.reduce((a,b)=>a+b,0);
+  const tot=wk+sp+RULES.highPrize+cc+sl;
+  const pct=v=>(v/POT*100).toFixed(1)+"%";
+  const places=(arr)=>arr.map((v,i)=>`<tr><td>${place(i+1)}</td><td class="r num">${money(v)}</td><td class="r num muted">${pct(v)}</td></tr>`).join("");
+  section("payouts","Payouts",`${PLAYERS.length} players × ${money(RULES.fee)} = ${money(POT)} · every dollar is accounted for`,
+   `<div class="grid g3 mb">
+     <div class="card accent"><h3>Champions Circle <span class="tag">${money(cc)}</span></h3><p class="small muted mb">Season total minus your ${RULES.drops} lowest weeks. A missed week counts as one of the drops.</p><div class="tw"><table><thead><tr><th>Place</th><th class="r">Payout</th><th class="r">% of pot</th></tr></thead><tbody>${places(RULES.cc)}</tbody></table></div></div>
+     <div class="card accent"><h3>Season-Long <span class="tag">${money(sl)}</span></h3><p class="small muted mb">Raw total of all ${RULES.weeksInSeason} weeks.</p><div class="tw"><table><thead><tr><th>Place</th><th class="r">Payout</th><th class="r">% of pot</th></tr></thead><tbody>${places(RULES.sl)}</tbody></table></div></div>
+     <div class="card accent"><h3>Weekly and bonuses <span class="tag">${money(wk+sp+RULES.highPrize)}</span></h3><div class="tw"><table><thead><tr><th>Prize</th><th class="r">Each</th><th class="r">Total</th></tr></thead><tbody>
+       <tr><td>Weekly winner × ${RULES.weeksInSeason}</td><td class="r num">${money(RULES.weekly)}</td><td class="r num">${money(wk)}</td></tr>
+       ${RULES.sprints.map(s=>`<tr><td>Sprint · Weeks ${s[0]}-${s[1]}</td><td class="r num">${money(RULES.sprintPrize)}</td><td class="r num"></td></tr>`).join("")}
+       <tr><td>Sprints total</td><td></td><td class="r num">${money(sp)}</td></tr>
+       <tr><td>Highest single week</td><td class="r num">${money(RULES.highPrize)}</td><td class="r num">${money(RULES.highPrize)}</td></tr></tbody></table></div></div></div>
+   <div class="card"><h3>Pot check</h3><div class="row"><div class="nm">Total payouts</div><span class="vl num">${money(tot)}</span></div><div class="row"><div class="nm">Total pot</div><span class="vl num">${money(POT)}</span></div><div class="row"><div class="nm">Difference</div><span class="vl num" style="color:${tot===POT?'var(--up)':'var(--down)'}">${money(POT-tot)}</span></div>
+   <p class="small muted" style="margin-top:10px">Ties split the money for the places involved. No bonus or multiplier weeks. Sunday main slate, classic contest.</p></div>`);
+}
+
+/* ---------------------------------------------------------------- HISTORY */
+function renderHistory(){
+  const R=RECAP_2025, yrs=Object.keys(PAST_SEASONS).map(Number).sort((a,b)=>b-a);
+  const champs=yrs.map(y=>{ const s=PAST_SEASONS[y]; const same=s.cc[0]===s.sl[0];
+    return `<tr><td class="oswald" style="font-size:16px">${y}</td><td><span class="own">${esc(s.cc[0])}</span></td><td>${same?'<span class="pill g">Swept both</span>':esc(s.sl[0])}</td><td class="r num">${f2(s.sl[1])}</td><td>${esc(s.high[0])} <span class="muted num">${f2(s.high[1])}</span></td><td class="c num">${s.players}</td></tr>`; }).join("");
+  const top=(arr,lab)=>`<div class="card accent"><h3>${lab}</h3>${arr.map((r,i)=>`<div class="row"><span class="pl">${i+1}</span><div class="nm"><span class="own">${esc(r[0])}</span><div class="dkn num">${f2(r[1])} pts</div></div><span class="vl num">${money(r[2])}</span></div>`).join("")}</div>`;
+  const wins={}; R.winners.forEach(w=>wins[w[1]]=(wins[w[1]]||0)+1);
+  section("history","History","Past champions and the full 2025 recap, pulled from the master sheet",
+   `<div class="card mb"><h3>Past champions</h3><div class="tw"><table><thead><tr><th>Season</th><th>Champion</th><th>Season-Long</th><th class="r">Season-Long pts</th><th>High week</th><th class="c">Players</th></tr></thead><tbody>${champs}</tbody></table></div>
+   <p class="small muted" style="margin-top:10px">Champion = Champions Circle winner (drop-3). Repeat winners: Glen Hitchcock (2021, 2022).</p></div>
+   <div class="banner" style="grid-template-columns:1fr 1fr"><div style="position:relative;z-index:1"><div class="eyebrow">2025 champion · swept both titles</div><div class="who">${esc(R.cc[0][0])}</div><div class="dk">Champions Circle ${f2(R.cc[0][1])} · Season-Long ${f2(R.sl[0][1])}</div><div class="pts num">${money(R.earnings[0][1])}<small>won in 2025</small></div></div>
+     <div class="podium">${R.earnings.slice(0,5).map((e,i)=>`<div class="pod"><span class="p">${i+1}</span><div><div class="n">${esc(e[0])}</div><div class="d">2025 earnings</div></div><span class="sc num">${money(e[1])}</span></div>`).join("")}</div></div>
+   <div class="grid g3 mb">${top(R.cc,"2025 Champions Circle")}${top(R.sl,"2025 Season-Long")}
+     <div class="card accent"><h3>2025 sprints and high score</h3>${R.sprints.map(s=>`<div class="row"><div class="nm"><span class="own">${esc(s[1])}</span><div class="dkn">${esc(s[0])} · ${f2(s[2])} pts</div></div><span class="vl num">$100</span></div>`).join("")}<div class="row"><div class="nm"><span class="own">${esc(R.high[0])}</span><div class="dkn">Highest week · ${f2(R.high[1])}</div></div><span class="vl num">${money(R.high[2])}</span></div></div></div>
+   <div class="grid g2"><div class="card"><h3>2025 weekly winners</h3><div class="tw"><table><thead><tr><th>Week</th><th>Winner</th><th class="r">Points</th></tr></thead><tbody>${R.winners.map(w=>`<tr><td class="oswald">W${w[0]}</td><td class="own">${esc(w[1])}</td><td class="r num">${f2(w[2])}</td></tr>`).join("")}</tbody></table></div></div>
+     <div class="card"><h3>2025 final standings <span class="tag">${R.players} players · ${money(R.pot)} pot</span></h3><div class="tw" style="max-height:620px"><table><thead><tr><th>#</th><th>Player</th><th class="r">Champions Circle</th><th class="r">Season-Long</th></tr></thead><tbody>${R.standings.map((s,i)=>`<tr><td>${rk(i+1)}</td><td class="own">${esc(s.owner)}</td><td class="r num">${f2(s.cc)}</td><td class="r num">${f2(s.sl)}</td></tr>`).join("")}</tbody></table></div></div></div>`);
+}
+
+/* ======================================================================
+   BOOT + module presence check
+   ====================================================================== */
+function boot(){
+  $("#tabs").innerHTML=TABS.map(([id,l])=>`<div class="tab" data-t="${id}" role="tab" tabindex="0">${l}</div>`).join("");
+  document.querySelectorAll(".tab").forEach(t=>{ t.onclick=()=>showTab(t.dataset.t); t.onkeydown=e=>{ if(e.key==="Enter") showTab(t.dataset.t); }; });
+  const cur = DONE ? weekResult(DONE) : null;
+  $("#headChips").innerHTML = `<span class="chip">Week ${DONE} of ${RULES.weeksInSeason}</span><span class="chip">${money(POT)} pot</span><span class="chip alt">${PLAYERS.length} players</span>`;
+  [renderOverview,renderWeekly,renderStandings,renderMovers,renderEarnings,renderWinners,renderAnalysis,renderRivalry,renderLab,renderPayouts,renderHistory].forEach(fn=>{ try{ fn(); }catch(err){ console.error(fn.name, err); } });
+  const missing=TABS.filter(([id])=>!document.getElementById(id) || !document.getElementById(id).innerHTML.trim()).map(t=>t[0]);
+  if(missing.length) console.warn("MODULE CHECK FAILED:", missing.join(", "));
+  $("#foot").innerHTML=`NFL DK League · ${SEASON} · data through Week ${DONE} · Champions Circle drops each player's ${RULES.drops} lowest weeks · built from the league's Google Sheet`;
+  const h=(location.hash||"").slice(1); showTab(TABS.some(t=>t[0]===h)?h:"overview");
+}
+boot();
+</script>
+</body>
+</html>
