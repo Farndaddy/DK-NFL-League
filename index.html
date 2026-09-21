@@ -127,6 +127,9 @@ table.stick th.s2{left:var(--c1)}
 table.stick .s2{box-shadow:inset -1px 0 0 var(--line2)}
 table.stick tr.hl td.s1,table.stick tr.hl td.s2{background:#221a25}
 table.stick tr:hover td.s1,table.stick tr:hover td.s2{background:#101b2f}
+.ov3{align-items:stretch}
+.ov3 .stack{display:flex;flex-direction:column;gap:16px;min-width:0}
+.ov3 .stack .card{flex:1}
 .btn{display:inline-block;margin-top:14px;background:var(--orange);color:#fff;border:0;border-radius:10px;padding:10px 16px;font:600 13px Inter;cursor:pointer;text-decoration:none}
 .btn:hover{background:var(--orange2)}
 
@@ -505,10 +508,12 @@ function renderOverview(){
     <div class="card kpi"><div class="v">${esc(st.cc[0].owner)}</div><div class="l">Champions Circle leader</div><div class="s">${f2(st.cc[0].cc)} pts${DONE<=RULES.drops?" · drops start at Week "+(RULES.drops+1):""}</div></div>
     <div class="card kpi"><div class="v num">${f2(hw.v)}</div><div class="l">Season high week</div><div class="s">${esc(hw.p.owner)} · Week ${hw.w} · $${RULES.highPrize} at season end</div></div>
   </div>`;
-  const cc=`<div class="card accent"><h3>Champions Circle <span class="tag">top 10 · ${DONE>RULES.drops?`best ${DONE-RULES.drops} of ${DONE} weeks`:`drops start at Week ${RULES.drops+1}`}</span></h3>${st.cc.slice(0,10).map(x=>`<div class="row ${isMe(x.dk)}"><span class="pl">${x.ccRank}</span><div class="nm"><span class="own">${esc(x.owner)}</span></div><span class="vl num">${f2(x.cc)}</span></div>`).join("")}<button class="btn" type="button" onclick="showTab('standings')">View full standings</button></div>`;
-  const spr=`<div class="card accent"><h3>Sprint race <span class="tag">Weeks ${sp.a}-${sp.b} · $${RULES.sprintPrize} · ${sp.complete?"final":"week "+sp.weeksIn+" of "+(sp.b-sp.a+1)}</span></h3>${sp.rows.slice(0,5).map(x=>`<div class="row"><span class="pl">${x._r}</span><div class="nm"><span class="own">${esc(x.owner)}</span><div class="dkn">${esc(x.dk)}</div></div><span class="vl num">${f2(x.t)}</span></div>`).join("")}</div>`;
-  const mon=`<div class="card accent"><h3>Money board <span class="tag">paid to date</span></h3>${moneyTop.length?moneyTop.map(([k,v],i)=>`<div class="row"><span class="pl">${i+1}</span><div class="nm"><span class="own">${esc(nameOf(k))}</span><div class="dkn">${v.wins?(+v.wins.toFixed(2))+" weekly win"+(v.wins===1?"":"s"):""}</div></div><span class="vl num">${money(v.total)}</span></div>`).join(""):`<div class="muted">No money paid yet.</div>`}</div>`;
-  section("overview",`Week ${DONE} in the books`,`${r.rows.length} lineups scored · updated after the Sunday main slate`, banner+kpis+`<div class="grid g3">${cc}${spr}${mon}</div>`);
+  const top10=(list,key,rkKey)=>list.slice(0,10).map(x=>`<div class="row ${isMe(x.dk)}"><span class="pl">${x[rkKey]}</span><div class="nm"><span class="own">${esc(x.owner)}</span></div><span class="vl num">${f2(x[key])}</span></div>`).join("");
+  const cc=`<div class="card accent"><h3>Champions Circle <span class="tag">top 10 · ${DONE>RULES.drops?`best ${DONE-RULES.drops} of ${DONE} weeks`:`drops start at Week ${RULES.drops+1}`}</span></h3>${top10(st.cc,"cc","ccRank")}<button class="btn" type="button" onclick="showTab('standings');renderStandings('cc')">View full standings</button></div>`;
+  const sl=`<div class="card accent"><h3>Season-Long Standings <span class="tag">top 10 · every week counts</span></h3>${top10(st.sl,"sl","slRank")}<button class="btn" type="button" onclick="showTab('standings');renderStandings('sl')">View full standings</button></div>`;
+  const spr=`<div class="card accent"><h3>Current Sprint <span class="tag">Weeks ${sp.a}-${sp.b} · $${RULES.sprintPrize} · ${sp.complete?"final":"week "+sp.weeksIn+" of "+(sp.b-sp.a+1)}</span></h3>${sp.rows.slice(0,5).map(x=>`<div class="row ${isMe(x.dk)}"><span class="pl">${x._r}</span><div class="nm"><span class="own">${esc(x.owner)}</span></div><span class="vl num">${f2(x.t)}</span></div>`).join("")}</div>`;
+  const mon=`<div class="card accent"><h3>Top Earners <span class="tag">paid to date</span></h3>${moneyTop.length?moneyTop.slice(0,5).map(([k,v],i)=>`<div class="row ${isMe(k)}"><span class="pl">${i+1}</span><div class="nm"><span class="own">${esc(nameOf(k))}</span></div><span class="vl num">${money(v.total)}</span></div>`).join(""):`<div class="muted">No money paid yet.</div>`}<button class="btn" type="button" onclick="showTab('earnings')">View all earnings</button></div>`;
+  section("overview",`Week ${DONE} in the books`,`${r.rows.length} lineups scored · updated after the Sunday main slate`, banner+kpis+`<div class="grid g3 ov3">${cc}${sl}<div class="stack">${spr}${mon}</div></div>`);
 }
 
 /* ---------------------------------------------------------------- WEEKLY */
