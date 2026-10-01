@@ -426,7 +426,9 @@ function weekResult(w){                    // w is 1-based
   const secondPts = second.length ? second[0].pts : null;
   return {rows, winners, seconds: second.filter(r=>r.pts===secondPts), avg: rows.reduce((a,b)=>a+b.pts,0)/(rows.length||1)};
 }
-function parseLineup(s){
+const _plCache={};
+function parseLineup(s){ if(s in _plCache) return _plCache[s]; return (_plCache[s]=_parseLineup(s)); }
+function _parseLineup(s){
   const out=[]; if(!s) return out;
   const re=/\b(QB|RB|WR|TE|FLEX|DST)\s+(.+?)(?=\s+(?:QB|RB|WR|TE|FLEX|DST)\s|$)/g; let m;
   while((m=re.exec(s))) out.push({slot:m[1], name:m[2].trim()});
@@ -436,8 +438,11 @@ function ownMerged(w){            // DK lists a player once per roster slot (e.g
   const m={}; (OWNERSHIP[w]||[]).forEach(r=>{ const k=r[0]; if(!m[k]) m[k]=[k, r[1]==="FLEX"?null:r[1], 0, r[3]]; if(r[1]!=="FLEX" && !m[k][1]) m[k][1]=r[1]; m[k][2]=+(m[k][2]+r[2]).toFixed(2); });
   return Object.values(m).map(r=>{ if(!r[1]) r[1]=truePos(r[0]); return r; });
 }
-function fptsMap(w){ const m={}; ownMerged(w).forEach(r=>{ m[r[0]]={pos:r[1],own:r[2],pts:r[3]}; }); return m; }
-function truePos(name){
+const _fpCache={};
+function fptsMap(w){ if(_fpCache[w]) return _fpCache[w]; const m={}; ownMerged(w).forEach(r=>{ m[r[0]]={pos:r[1],own:r[2],pts:r[3]}; }); return (_fpCache[w]=m); }
+const _tpCache={};
+function truePos(name){ if(name in _tpCache) return _tpCache[name]; return (_tpCache[name]=_truePos(name)); }
+function _truePos(name){
   for(const w in LINEUPS) for(const dk in LINEUPS[w]) for(const x of parseLineup(LINEUPS[w][dk])) if(x.name===name && x.slot!=="FLEX") return x.slot;
   for(const w in OWNERSHIP) for(const r of OWNERSHIP[w]) if(r[0]===name && r[1]!=="FLEX") return r[1];
   return "FLEX";
@@ -645,46 +650,78 @@ function renderRivalry(){
 }
 
 /* ---------------------------------------------------------------- NFL LAB */
-function renderLab(sel){
-  if(!DONE){ section("lab","NFL Lab","",`<div class="empty">No weeks yet.</div>`); return; }
-  const w=sel||DONE, fp=fptsMap(w), own=ownMerged(w), lus=LINEUPS[w]||{}, nLu=Object.keys(lus).length;
+function labWeek(w){              // every per-week number the Lab uses
+  const fp=fptsMap(w), own=ownMerged(w), lus=LINEUPS[w]||{}, res=weekResult(w);
   const rosteredBy=name=>Object.entries(lus).filter(([dk,s])=>parseLineup(s).some(x=>x.name===name)).map(([dk])=>nameOf(dk));
-  const chalk=own.slice().sort((a,b)=>b[2]-a[2]).slice(0,10);
-  const maxOwn=chalk.length?chalk[0][2]:1;
-  const chalkHTML=chalk.map(r=>`<div class="row"><div class="nm"><span class="own">${esc(r[0])} <span class="pos">${r[1]==="FLEX"?truePos(r[0]):r[1]}</span></span><div class="bar"><i style="width:${r[2]/maxOwn*100}%"></i></div></div><div style="text-align:right"><div class="vl num">${f2(r[2]).replace(/0$/,"")}%</div><div class="small ${r[3]>=15?'up':'down'}">${f2(r[3])} pts</div></div></div>`).join("");
-  const low=own.filter(r=>r[2]<=12).sort((a,b)=>b[3]-a[3]).slice(0,8);
-  const lowHTML=low.map(r=>`<div class="row"><div class="nm"><span class="own">${esc(r[0])} <span class="pos">${r[1]==="FLEX"?truePos(r[0]):r[1]}</span></span><div class="dkn">${rosteredBy(r[0]).map(esc).join(", ")}</div></div><div style="text-align:right"><div class="vl num">${f2(r[3])}</div><div class="small muted">${f2(r[2]).replace(/0$/,"")}% owned</div></div></div>`).join("");
-  // position leaders among rostered players
-  const posBest={QB:[],RB:[],WR:[],TE:[],DST:[]};
-  own.forEach(r=>{ const p=r[1]==="FLEX"?truePos(r[0]):r[1]; if(posBest[p]) posBest[p].push(r); });
-  const posHTML=Object.entries(posBest).map(([p,l])=>{ const b=l.sort((a,c)=>c[3]-a[3]).slice(0,3); return `<div class="card" style="background:var(--card2)"><h3>${p}</h3>${b.map((r,i)=>`<div class="row"><span class="pl">${i+1}</span><div class="nm"><span class="own">${esc(r[0])}</span><div class="dkn">${f2(r[2]).replace(/0$/,"")}% · ${rosteredBy(r[0]).length} lineup${rosteredBy(r[0]).length===1?"":"s"}</div></div><span class="vl num">${f2(r[3])}</span></div>`).join("")}</div>`; }).join("");
-  // stacks
-  const res=weekResult(w); const stackRows=[];
-  res.rows.forEach(x=>{ if(!x.lineup) return; const L=parseLineup(x.lineup); const qb=L.find(z=>z.slot==="QB"); if(!qb||!TEAMS[qb.name]) { stackRows.push({x,stack:null}); return; }
-    const mates=L.filter(z=>z!==qb && z.slot!=="DST" && TEAMS[z.name]===TEAMS[qb.name]); stackRows.push({x,qb,mates,team:TEAMS[qb.name],stack:mates.length?true:false}); });
-  const stacked=stackRows.filter(s=>s.stack===true), naked=stackRows.filter(s=>s.stack===false);
-  const avg=a=>a.length?a.reduce((s,v)=>s+v.x.pts,0)/a.length:0;
-  const stackHTML=`<div class="grid g3 mb"><div class="card kpi" style="background:var(--card2)"><div class="v num">${stacked.length}</div><div class="l">Lineups with a QB stack</div><div class="s">avg ${f2(avg(stacked))} pts</div></div><div class="card kpi" style="background:var(--card2)"><div class="v num">${naked.length}</div><div class="l">QB with no teammate</div><div class="s">avg ${f2(avg(naked))} pts</div></div><div class="card kpi" style="background:var(--card2)"><div class="v num">${f2(avg(stacked)-avg(naked))}</div><div class="l">Stack edge (pts)</div><div class="s">stacked minus unstacked</div></div></div>
-    <div class="tw"><table><thead><tr><th>#</th><th>Player</th><th>Stack</th><th class="r">QB</th><th class="r">Pass catchers</th><th class="r">Lineup</th></tr></thead><tbody>${stacked.map(s=>`<tr><td>${rk(s.x._r)}</td><td>${who(s.x.owner,s.x.dk)}</td><td><span class="pill">${s.team}</span> ${esc(s.qb.name)} + ${s.mates.map(m=>esc(m.name)).join(" + ")}</td><td class="r num">${f2((fp[s.qb.name]||{}).pts)}</td><td class="r num">${f2(s.mates.reduce((a,m)=>a+((fp[m.name]||{}).pts||0),0))}</td><td class="r tot num">${f2(s.x.pts)}</td></tr>`).join("")||`<tr><td colspan="6" class="muted">No stacks detected.</td></tr>`}</tbody></table></div>`;
-  // hindsight lineup: best possible from rostered players (no salary cap)
+  const stackRows=[];
+  res.rows.forEach(x=>{ if(!x.lineup) return; const L=parseLineup(x.lineup); const qb=L.find(z=>z.slot==="QB"); if(!qb||!TEAMS[qb.name]) { stackRows.push({x,w,stack:null}); return; }
+    const mates=L.filter(z=>z!==qb && z.slot!=="DST" && TEAMS[z.name]===TEAMS[qb.name]); stackRows.push({x,w,qb,mates,team:TEAMS[qb.name],stack:mates.length>0,qbPts:(fp[qb.name]||{}).pts,matePts:mates.reduce((a,m)=>a+((fp[m.name]||{}).pts||0),0)}); });
   const pool=own.map(r=>({name:r[0],pos:r[1]==="FLEX"?truePos(r[0]):r[1],pts:r[3],own:r[2]}));
   const pick=(pos,n,used)=>pool.filter(p=>p.pos===pos && !used.has(p.name)).sort((a,b)=>b.pts-a.pts).slice(0,n);
   const used=new Set(), H=[]; [["QB",1],["RB",2],["WR",3],["TE",1],["DST",1]].forEach(([p,n])=>pick(p,n,used).forEach(x=>{used.add(x.name);H.push({slot:p,...x});}));
   const flex=pool.filter(p=>["RB","WR","TE","FLEX"].includes(p.pos)&&!used.has(p.name)).sort((a,b)=>b.pts-a.pts)[0]; if(flex) H.push({slot:"FLEX",...flex});
-  const hTot=H.reduce((a,b)=>a+b.pts,0);
-  const hindHTML=`<div class="card accent"><h3>Hindsight lineup <span class="tag">best 9 from players someone in the league rostered · no salary cap</span></h3>${H.map(x=>`<div class="row"><span class="pos">${x.slot}</span><div class="nm"><span class="own">${esc(x.name)}</span><div class="dkn">${f2(x.own).replace(/0$/,"")}% owned</div></div><span class="vl num">${f2(x.pts)}</span></div>`).join("")}<div class="row"><div class="nm"><span class="own">Total</span><div class="dkn">winner scored ${f2(res.winners[0].pts)}</div></div><span class="vl num" style="color:var(--orange2)">${f2(hTot)}</span></div></div>`;
-  // uniqueness
-  const uniq=res.rows.filter(x=>x.lineup).map(x=>({x, o:parseLineup(x.lineup).reduce((a,z)=>a+((fp[z.name]||{}).own||0),0)})).sort((a,b)=>a.o-b.o);
-  const uniqHTML=`<div class="card accent"><h3>Chalk meter <span class="tag">sum of ownership across 9 slots</span></h3>
-    <div class="small muted" style="margin-bottom:6px">Most contrarian</div>${uniq.slice(0,3).map(u=>`<div class="row"><div class="nm"><span class="own">${esc(u.x.owner)}</span><div class="dkn">finished ${place(u.x._r)} · ${f2(u.x.pts)} pts</div></div><span class="vl num">${Math.round(u.o)}%</span></div>`).join("")}
-    <div class="small muted" style="margin:12px 0 6px">Chalkiest</div>${uniq.slice(-3).reverse().map(u=>`<div class="row"><div class="nm"><span class="own">${esc(u.x.owner)}</span><div class="dkn">finished ${place(u.x._r)} · ${f2(u.x.pts)} pts</div></div><span class="vl num">${Math.round(u.o)}%</span></div>`).join("")}</div>`;
-  const opts=WEEKS.map(x=>`<option value="${x.wk}" ${x.wk===w?"selected":""}>${x.label}</option>`).join("");
-  document.getElementById("lab").innerHTML=`<div class="sh"><h2>NFL Lab<small>Who the league rostered, what hit, and what didn't · ${nLu} lineups submitted</small></h2><select id="labSel" aria-label="Week">${opts}</select></div>
-   <div class="grid g2 mb"><div class="card accent"><h3>Most rostered <span class="tag">league ownership · points scored</span></h3>${chalkHTML}</div><div class="card accent"><h3>Best low-owned plays <span class="tag">12% owned or less</span></h3>${lowHTML}</div></div>
-   <div class="sh" style="margin-top:8px"><h2 style="font-size:20px">Position leaders<small>Top rostered scorer at each spot</small></h2></div><div class="grid g4 mb" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">${posHTML}</div>
+  const uniq=res.rows.filter(x=>x.lineup).map(x=>({x, w, o:parseLineup(x.lineup).reduce((a,z)=>a+((fp[z.name]||{}).own||0),0)})).sort((a,b)=>a.o-b.o);
+  return {w,fp,own,lus,res,rosteredBy,stackRows,H,hTot:H.reduce((a,b)=>a+b.pts,0),uniq,nLu:Object.keys(lus).length};
+}
+function renderLab(sel){
+  if(!DONE){ section("lab","NFL Lab","",`<div class="empty">No weeks yet.</div>`); return; }
+  const mode = (sel===undefined || sel==="all") ? "all" : +sel;
+  const all = mode==="all";
+  const weeks = all ? WEEKS.map(x=>labWeek(x.wk)) : [labWeek(mode)];
+  const pct=v=>(+v).toFixed(2).replace(/\.?0+$/,"")+"%";
+  const posOf=r=>r[1]==="FLEX"?truePos(r[0]):r[1];
+  const avg=a=>a.length?a.reduce((s,v)=>s+v.x.pts,0)/a.length:0;
+  let chalkHTML, lowHTML, posHTML, hindHTML, uniqHTML, subtitle;
+
+  if(!all){
+    const L=weeks[0], own=L.own, res=L.res, rosteredBy=L.rosteredBy;
+    subtitle=`Week ${mode} · ${L.nLu} lineups submitted`;
+    const chalk=own.slice().sort((a,b)=>b[2]-a[2]).slice(0,10), maxOwn=chalk.length?chalk[0][2]:1;
+    chalkHTML=chalk.map(r=>`<div class="row"><div class="nm"><span class="own">${esc(r[0])} <span class="pos">${posOf(r)}</span></span><div class="bar"><i style="width:${r[2]/maxOwn*100}%"></i></div></div><div style="text-align:right"><div class="vl num">${pct(r[2])}</div><div class="small ${r[3]>=15?'up':'down'}">${f2(r[3])} pts</div></div></div>`).join("");
+    lowHTML=own.filter(r=>r[2]<=12).sort((a,b)=>b[3]-a[3]).slice(0,8).map(r=>`<div class="row"><div class="nm"><span class="own">${esc(r[0])} <span class="pos">${posOf(r)}</span></span><div class="dkn">${rosteredBy(r[0]).map(esc).join(", ")}</div></div><div style="text-align:right"><div class="vl num">${f2(r[3])}</div><div class="small muted">${pct(r[2])} owned</div></div></div>`).join("");
+    const posBest={QB:[],RB:[],WR:[],TE:[],DST:[]}; own.forEach(r=>{ const p=posOf(r); if(posBest[p]) posBest[p].push(r); });
+    posHTML=Object.entries(posBest).map(([p,l])=>`<div class="card" style="background:var(--card2)"><h3>${p}</h3>${l.sort((a,c)=>c[3]-a[3]).slice(0,3).map((r,i)=>{ const n=rosteredBy(r[0]).length; return `<div class="row"><span class="pl">${i+1}</span><div class="nm"><span class="own">${esc(r[0])}</span><div class="dkn">${pct(r[2])} · ${n} lineup${n===1?"":"s"}</div></div><span class="vl num">${f2(r[3])}</span></div>`; }).join("")}</div>`).join("");
+    hindHTML=`<div class="card accent"><h3>Hindsight lineup <span class="tag">best 9 from players someone in the league rostered · no salary cap</span></h3>${L.H.map(x=>`<div class="row"><span class="pos">${x.slot}</span><div class="nm"><span class="own">${esc(x.name)}</span><div class="dkn">${pct(x.own)} owned</div></div><span class="vl num">${f2(x.pts)}</span></div>`).join("")}<div class="row"><div class="nm"><span class="own">Total</span><div class="dkn">winner scored ${f2(res.winners[0].pts)}</div></div><span class="vl num" style="color:var(--orange2)">${f2(L.hTot)}</span></div></div>`;
+    const u=L.uniq, line=x=>`<div class="row"><div class="nm"><span class="own">${esc(x.x.owner)}</span><div class="dkn">finished ${place(x.x._r)} · ${f2(x.x.pts)} pts</div></div><span class="vl num">${Math.round(x.o)}%</span></div>`;
+    uniqHTML=`<div class="card accent"><h3>Chalk meter <span class="tag">sum of ownership across 9 slots</span></h3><div class="small muted" style="margin-bottom:6px">Most contrarian</div>${u.slice(0,3).map(line).join("")}<div class="small muted" style="margin:12px 0 6px">Chalkiest</div>${u.slice(-3).reverse().map(line).join("")}</div>`;
+  } else {
+    // ---------- ALL WEEKS COMBINED ----------
+    const totalLu=weeks.reduce((a,L)=>a+L.nLu,0);
+    subtitle=`All ${DONE} weeks combined · ${totalLu} lineups submitted`;
+    // Season ownership: share of every lineup submitted, and average points in the weeks he was rostered
+    const agg={};
+    weeks.forEach(L=>{ Object.values(L.lus).forEach(s=>parseLineup(s).forEach(z=>{ const a=agg[z.name]||(agg[z.name]={name:z.name,cnt:0,weeks:new Set()}); a.cnt++; a.weeks.add(L.w); })); });
+    Object.values(agg).forEach(a=>{ a.own=a.cnt/totalLu*100; a.wk=a.weeks.size; a.avgPts=[...a.weeks].reduce((s,w)=>s+((fptsMap(w)[a.name]||{}).pts||0),0)/a.wk; a.pos=truePos(a.name); });
+    const chalk=Object.values(agg).sort((a,b)=>b.cnt-a.cnt).slice(0,10), maxC=chalk.length?chalk[0].cnt:1;
+    chalkHTML=chalk.map(a=>`<div class="row"><div class="nm"><span class="own">${esc(a.name)} <span class="pos">${a.pos}</span></span><div class="bar"><i style="width:${a.cnt/maxC*100}%"></i></div><div class="dkn">${a.cnt} lineups · rostered in ${a.wk} of ${DONE} weeks</div></div><div style="text-align:right"><div class="vl num">${pct(a.own)}</div><div class="small ${a.avgPts>=15?'up':'down'}">${f2(a.avgPts)} avg pts</div></div></div>`).join("");
+    // Best low-owned single-week plays across all weeks
+    const pw=[]; weeks.forEach(L=>L.own.forEach(r=>pw.push({L,r})));
+    lowHTML=pw.filter(x=>x.r[2]<=12).sort((a,b)=>b.r[3]-a.r[3]).slice(0,8).map(({L,r})=>`<div class="row"><div class="nm"><span class="own">${esc(r[0])} <span class="pos">${posOf(r)}</span> <span class="pill n">Wk ${L.w}</span></span><div class="dkn">${L.rosteredBy(r[0]).map(esc).join(", ")}</div></div><div style="text-align:right"><div class="vl num">${f2(r[3])}</div><div class="small muted">${pct(r[2])} owned</div></div></div>`).join("");
+    // Position leaders: best single-week games by a rostered player
+    const posBest={QB:[],RB:[],WR:[],TE:[],DST:[]}; pw.forEach(x=>{ const p=posOf(x.r); if(posBest[p]) posBest[p].push(x); });
+    posHTML=Object.entries(posBest).map(([p,l])=>`<div class="card" style="background:var(--card2)"><h3>${p}</h3>${l.sort((a,c)=>c.r[3]-a.r[3]).slice(0,3).map(({L,r},i)=>{ const n=L.rosteredBy(r[0]).length; return `<div class="row"><span class="pl">${i+1}</span><div class="nm"><span class="own">${esc(r[0])}</span><div class="dkn">Wk ${L.w} · ${n} lineup${n===1?"":"s"}</div></div><span class="vl num">${f2(r[3])}</span></div>`; }).join("")}</div>`).join("");
+    // Hindsight vs the winner, week by week
+    hindHTML=`<div class="card accent"><h3>Hindsight vs winner <span class="tag">best possible 9 from rostered players, each week</span></h3>${weeks.map(L=>`<div class="row"><span class="pl">W${L.w}</span><div class="nm"><span class="own">${f2(L.hTot)} possible</span><div class="dkn">winner ${esc(L.res.winners.map(x=>x.owner).join(" & "))} · ${f2(L.res.winners[0].pts)}</div></div><span class="vl num">${Math.round(L.res.winners[0].pts/L.hTot*100)}%</span></div>`).join("")}<p class="small muted" style="margin-top:10px">% = the winning score as a share of the best possible lineup that week.</p></div>`;
+    // Chalk meter: each manager's average across the weeks they entered
+    const mgr={}; weeks.forEach(L=>L.uniq.forEach(u=>{ const m=mgr[u.x.dk]||(mgr[u.x.dk]={owner:u.x.owner,o:0,n:0,fin:0}); m.o+=u.o; m.n++; m.fin+=u.x._r; }));
+    const ml=Object.values(mgr).map(m=>({...m,avgO:m.o/m.n,avgFin:m.fin/m.n})).sort((a,b)=>a.avgO-b.avgO);
+    const line=m=>`<div class="row"><div class="nm"><span class="own">${esc(m.owner)}</span><div class="dkn">avg finish ${m.avgFin.toFixed(1).replace(/\.0$/,"")} · ${m.n} week${m.n===1?"":"s"}</div></div><span class="vl num">${Math.round(m.avgO)}%</span></div>`;
+    uniqHTML=`<div class="card accent"><h3>Chalk meter <span class="tag">average ownership sum per lineup</span></h3><div class="small muted" style="margin-bottom:6px">Most contrarian</div>${ml.slice(0,3).map(line).join("")}<div class="small muted" style="margin:12px 0 6px">Chalkiest</div>${ml.slice(-3).reverse().map(line).join("")}</div>`;
+  }
+
+  // QB stacks: one week, or every week combined
+  const rows=weeks.flatMap(L=>L.stackRows), stacked=rows.filter(s=>s.stack===true), naked=rows.filter(s=>s.stack===false);
+  const shown=stacked.slice().sort((a,b)=>b.x.pts-a.x.pts).slice(0, all?15:999);
+  const stackHTML=`<div class="grid g3 mb"><div class="card kpi" style="background:var(--card2)"><div class="v num">${stacked.length}</div><div class="l">Lineups with a QB stack</div><div class="s">avg ${f2(avg(stacked))} pts</div></div><div class="card kpi" style="background:var(--card2)"><div class="v num">${naked.length}</div><div class="l">QB with no teammate</div><div class="s">avg ${f2(avg(naked))} pts</div></div><div class="card kpi" style="background:var(--card2)"><div class="v num">${f2(avg(stacked)-avg(naked))}</div><div class="l">Stack edge (pts)</div><div class="s">stacked minus unstacked</div></div></div>
+    <div class="tw"><table><thead><tr>${all?'<th>Wk</th>':''}<th>#</th><th>Player</th><th>Stack</th><th class="r">QB</th><th class="r">Pass catchers</th><th class="r">Lineup</th></tr></thead><tbody>${shown.map(s=>`<tr>${all?`<td class="oswald">W${s.w}</td>`:''}<td>${rk(s.x._r)}</td><td>${who(s.x.owner,s.x.dk)}</td><td><span class="pill">${s.team}</span> ${esc(s.qb.name)} + ${s.mates.map(m=>esc(m.name)).join(" + ")}</td><td class="r num">${f2(s.qbPts)}</td><td class="r num">${f2(s.matePts)}</td><td class="r tot num">${f2(s.x.pts)}</td></tr>`).join("")||`<tr><td colspan="7" class="muted">No stacks detected.</td></tr>`}</tbody></table></div>${all&&stacked.length>15?`<p class="small muted" style="margin-top:8px">Top 15 of ${stacked.length} stacked lineups by score. Pick a single week to see them all.</p>`:""}`;
+
+  const opts=`<option value="all" ${all?"selected":""}>All Weeks</option>`+WEEKS.map(x=>`<option value="${x.wk}" ${x.wk===mode?"selected":""}>${x.label}</option>`).join("");
+  document.getElementById("lab").innerHTML=`<div class="sh"><h2>NFL Lab<small>Who the league rostered, what hit, and what didn't · ${subtitle}</small></h2><select id="labSel" aria-label="Week">${opts}</select></div>
+   <div class="grid g2 mb"><div class="card accent"><h3>Most rostered <span class="tag">${all?"share of all lineups · avg pts when rostered":"league ownership · points scored"}</span></h3>${chalkHTML}</div><div class="card accent"><h3>Best low-owned plays <span class="tag">${all?"single weeks · ":""}12% owned or less</span></h3>${lowHTML}</div></div>
+   <div class="sh" style="margin-top:8px"><h2 style="font-size:20px">Position leaders<small>${all?"Best single-week games by a rostered player":"Top rostered scorer at each spot"}</small></h2></div><div class="grid g4 mb" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">${posHTML}</div>
    <div class="sh" style="margin-top:8px"><h2 style="font-size:20px">QB stacks<small>QB paired with his own pass catchers · teams are tracked for common stack players</small></h2></div>${stackHTML}
    <div class="grid g2" style="margin-top:16px">${hindHTML}${uniqHTML}</div>`;
-  $("#labSel").onchange=e=>renderLab(+e.target.value);
+  $("#labSel").onchange=e=>renderLab(e.target.value);
 }
 
 /* ---------------------------------------------------------------- PAYOUTS */
